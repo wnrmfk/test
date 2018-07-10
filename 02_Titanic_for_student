@@ -1,0 +1,961 @@
+
+# coding: utf-8
+
+# # Titanic: 타이타닉호의 생존률 예측
+# 
+# ---
+# 
+# - 침몰된 타이타닉호로부터 살아나온 생존자에 대해서 분석
+# - 어떤 변수가 생존율에 영향을 더 미쳤는지 파악해 보자
+# 
+# ## 데이터 셋 정보 (Metadata)
+# 
+# The data has been split into two groups:
+# 
+# **training set (train.csv), test set (test.csv)**
+# 
+# **The training set** should be used to build your machine learning models. For the training set, we provide the outcome (also known as the “ground truth”) for each passenger. Your model will be based on “features” like passengers’ gender and class. You can also use feature engineering to create new features.
+# 
+# **The test set** should be used to see how well your model performs on unseen data. For the test set, we do not provide the ground truth for each passenger. It is your job to predict these outcomes. For each passenger in the test set, use the model you trained to predict whether or not they survived the sinking of the Titanic.
+# 
+# 
+
+# In[2]:
+
+
+import numpy as np # linear algebra
+import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
+
+import matplotlib.pyplot as plt # 데이터 시각화를 Python 라이브러리
+import seaborn as sns  # 데이터 시각화를 Python 라이브러리
+
+from IPython.display import Image # 주피터 노트북에 이미지 삽입을 위한 라이브러리
+
+get_ipython().run_line_magic('matplotlib', 'inline')
+
+# 화면에 보이는 테이블 정보량 설정
+pd.set_option('max_rows', 30)
+pd.set_option('max_columns', 15) 
+
+import warnings
+warnings.filterwarnings('ignore')
+
+from matplotlib.pylab import rcParams
+rcParams['figure.figsize'] = 12, 8
+rcParams['axes.grid'] = True
+
+from sklearn.linear_model import LogisticRegression
+from sklearn.svm import SVC, LinearSVC
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.naive_bayes import GaussianNB
+
+
+# # 1. 훈련 데이터 살펴보기
+
+# ## 변수 살펴보기
+
+# In[5]:
+
+
+path = 'data/titanic/'
+train_df = pd.read_csv(path + 'titanic_train.csv')
+test_df = pd.read_csv(path + 'titanic_test.csv')
+
+print('Train shape : ', train_df.shape)  # 7
+print('Test shape : ', test_df.shape)  # 3
+
+
+# In[4]:
+
+
+print('=' * 20, 'Train_DF Info', '=' * 20)
+train_df.info()
+print('')
+print('=' * 20, 'Test_DF Info', '=' * 20)
+test_df.info()
+
+
+# In[6]:
+
+
+from IPython.display import Image
+Image('images/titanic_meta1.png')
+
+
+# In[5]:
+
+
+Image('images/titanic_meta2.png')
+
+
+# In[6]:
+
+
+train_df.head()
+
+
+# ## 변수 간 상관관계는 어느 정도일까?
+
+# ### 상관계수(Correlation Coefficient)
+
+# - 두 변수간에 어떤 선형적 관계를 갖고 있는 지를 분석하는 방법이다.
+# - 두 변수는 서로 독립적인 관계로부터 서로 상관된 관계일 수 있으며 이때 두 변수간의 관계의 강도를 상관관계(Correlation, Correlation coefficient)라 한다.
+
+# In[8]:
+
+
+train_df[["Survived", "Pclass", "SibSp", "Parch", "Age", "Fare"]].corr()
+
+
+# > **Q. 모든 컬럼을 대상으로 상관계수(corr())을 알아보려면 어떻게 해야할까?**
+
+# In[ ]:
+
+
+# 작성해보세요~
+
+
+# > **Q. 그런데 처음에 모든 컬럼을 대상으로 하지 않고 몇 가지 컬럼만 선택해서 상관관계를 파악했을까요?**
+
+# ### 테이블 보단 역시 그림, heatmap!
+
+# In[12]:
+
+
+sns.heatmap(
+    train_df[["Survived","Pclass","SibSp","Parch","Age","Fare"]].corr(),  # value
+    annot=True,  # 주석
+    fmt=".2f",  # format
+    cmap="coolwarm"  # color
+);
+
+
+# > **Q. 다음으로 승선항(Embarked) 데이터를 카운팅해보세요~**
+
+# In[ ]:
+
+
+# 여기에 작성해보세요~
+
+
+# In[8]:
+
+
+sns.countplot('Embarked', data=train_df);
+
+
+# ### Embarked 컬럼의 결측치를 채워보자.
+
+# In[52]:
+
+
+train_df.isnull().any()
+
+
+# In[12]:
+
+
+train_df['Embarked'].value_counts() / train_df.shape[0] * 100
+
+
+# In[22]:
+
+
+train_df['Embarked'] = train_df['Embarked'].fillna('S')
+
+
+# In[23]:
+
+
+train_df['Embarked'].isnull().any()
+
+
+# https://seaborn.pydata.org/generated/seaborn.countplot.html
+
+# In[24]:
+
+
+sns.countplot('Embarked', hue='Survived', data=train_df);
+
+
+# factorplot: Draw a categorical plot onto a FacetGrid.
+
+# In[16]:
+
+
+sns.factorplot('Embarked', 'Survived', data=train_df);
+
+
+# ### Age 컬럼의 결측치를 채워보자.
+
+# In[25]:
+
+
+train_df['Age'].isnull().sum() / len(train_df['Age']) * 100  # 결측치 비율 확인
+
+
+# In[18]:
+
+
+train_df['Age'].hist(bins=40);
+
+
+# > 여러가지 컬럼값을 하나의 그래프로 나타내는 방법들도 존재한다!
+
+# In[19]:
+
+
+sns.violinplot('Pclass', 
+               'Age', 
+               hue='Survived', 
+               data=train_df, 
+               split=True, 
+               inner="quartile");
+
+
+# > 다양한 시각화 방법이 존재한다.
+
+# ---
+
+# https://pandas.pydata.org/pandas-docs/stable/generated/pandas.crosstab.html
+
+# In[44]:
+
+
+pd.crosstab(train_df['Pclass'], train_df['Survived'], margins=True)
+
+
+# In[47]:
+
+
+f, ax = plt.subplots(1, 2, figsize=(12,8))
+
+# 0
+train_df['Pclass'].value_counts().plot.bar(ax=ax[0])
+ax[0].set_title('Number Of Passengers By Pclass')
+ax[0].set_ylabel('Count')
+
+# 1
+sns.countplot('Pclass', hue='Survived', data=train_df, ax=ax[1])
+ax[1].set_title('Pclass:Survived vs Dead')
+
+plt.show();
+
+
+# > Q. 
+# 
+# > 1. 탑승항('Embarked')을 기준으로 승객을 분류하여
+# > 2. 각각의 승객의 나이에 따른 
+# > 3. 생존 여부를 violinplot 그래프를 이용해서 표현해보자.
+# 
+# > **탑승항에 따른 생존율의 차이가 나타나는가?**
+
+# In[ ]:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# In[49]:
+
+
+sns.violinplot(
+    'Embarked',
+    'Age', 
+    hue='Survived', 
+    data=train_df, 
+    split=True, 
+    inner="quartile");
+
+
+# > Q. 
+# 
+# > 1. 성별('Sex')을 기준으로 승객을 분류하여 
+# > 2. 각각의 승객의 나이에 따른 
+# > 3. 생존 여부를 그래프로 표현해보자. 
+# 
+# > **성별에 따른 생존율의 차이가 나타나는가?**
+
+# In[ ]:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# In[51]:
+
+
+sns.violinplot(
+    'Sex', 
+    'Age', 
+    hue='Survived', data=train_df, split=True, inner="quartile");
+
+
+# > Q. **성별('Sex')에 따른 승객의 생존자 수를 crosstab으로 표현해보자. 성별에 따른 생존율의 차이가 나타나는가?**
+
+# In[ ]:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# In[52]:
+
+
+pd.crosstab(train_df['Sex'], train_df['Survived'], margins=True)
+
+
+# > **Q. Age의 결측치를 어떻게 채우는 것이 좋을까? 주어진 데이터를 활용하여 결측치를 채우는 방법을 토론해보자.**
+
+# > 평균?
+
+# In[53]:
+
+
+train_df['Age'].mean()
+
+
+# > 중앙값?
+
+# In[54]:
+
+
+train_df['Age'].median()
+
+
+# > 최빈값?
+
+# In[55]:
+
+
+train_df['Age'].mode()
+
+
+# > **성별에 따른 나이차는 없을까?**
+
+# In[65]:
+
+
+train_df[train_df['Sex'] == 'male'].Age.mean()
+
+
+# In[66]:
+
+
+train_df[train_df['Sex'] == 'female']['Age'].mean()
+
+
+# > **Q. 승객의 성별('Sex') 나이의 중앙값을 찾아보자.**
+
+# In[ ]:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# In[67]:
+
+
+train_df[train_df['Sex']=='male']['Age'].median()
+
+
+# In[68]:
+
+
+train_df[train_df['Sex']=='female']['Age'].median()
+
+
+# > **Q. 승객의 선실 등급('Pclass')별 나이의 중앙값을 찾아보자.**
+
+# In[ ]:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# In[69]:
+
+
+train_df['Pclass'].value_counts()
+
+
+# In[70]:
+
+
+train_df[train_df['Pclass'] == 1]['Age'].median()
+
+
+# In[71]:
+
+
+train_df[train_df['Pclass']==2]['Age'].median()
+
+
+# In[72]:
+
+
+train_df[train_df['Pclass']==3]['Age'].median()
+
+
+# > **Q. 승객의 선실 등급('Pclass')과 성별('Sex)을 둘다 고려하여 분류하고 각각의 나이의 중앙값을 찾아보자. (1등석에 탑승한 여자의 나이의 Median은? 2등석에 탑승한 남자의 나이의 Median은?)**
+
+# In[73]:
+
+
+train_df[(train_df['Sex']=='male') & (train_df['Pclass']==1)]['Age'].median()
+
+
+# In[74]:
+
+
+train_df[(train_df['Sex']=='male') & (train_df['Pclass']==2)]['Age'].median()
+
+
+# In[75]:
+
+
+train_df[(train_df['Sex']=='male') & (train_df['Pclass']==3)]['Age'].median()
+
+
+# In[76]:
+
+
+train_df[(train_df['Sex']=='female') & (train_df['Pclass']==1)]['Age'].median()
+
+
+# In[77]:
+
+
+train_df[(train_df['Sex']=='female') & (train_df['Pclass']==2)]['Age'].median()
+
+
+# In[78]:
+
+
+train_df[(train_df['Sex']=='female') & (train_df['Pclass']==3)]['Age'].median()
+
+
+# > 이 자료를 이용하여 Age의 결측치를 채워보자.
+
+# In[79]:
+
+
+median_male_1 = train_df[
+    (train_df['Sex'] == 'male') & (train_df['Pclass'] == 1)
+]['Age'].median()
+
+
+# In[81]:
+
+
+median_male_2 = train_df[(train_df['Sex']=='male') & (train_df['Pclass']==2)]['Age'].median()
+median_male_3 = train_df[(train_df['Sex']=='male') & (train_df['Pclass']==3)]['Age'].median()
+median_female_1 = train_df[(train_df['Sex']=='female') & (train_df['Pclass']==1)]['Age'].median()
+median_female_2 = train_df[(train_df['Sex']=='female') & (train_df['Pclass']==2)]['Age'].median()
+median_female_3 = train_df[(train_df['Sex']=='female') & (train_df['Pclass']==3)]['Age'].median()
+
+
+# In[85]:
+
+
+train_df['Age'].isnull().sum()
+
+
+# In[86]:
+
+
+train_df.loc[
+    (train_df['Age'].isnull()) & (train_df['Sex'] == 'male') & (train_df['Pclass'] == 1),
+    'Age'
+] = median_male_1
+
+
+# In[88]:
+
+
+train_df['Age'].isnull().sum()
+
+
+# > **Q. 같은 방식으로 나머지 결측치도 채워보자.**
+
+# In[89]:
+
+
+train_df.loc[(train_df['Age'].isnull())&(train_df['Sex']=='male')&(train_df['Pclass']==2),'Age'] = median_male_2
+train_df.loc[(train_df['Age'].isnull())&(train_df['Sex']=='male')&(train_df['Pclass']==3),'Age'] = median_male_3
+train_df.loc[(train_df['Age'].isnull())&(train_df['Sex']=='female')&(train_df['Pclass']==1),'Age'] = median_female_1
+train_df.loc[(train_df['Age'].isnull())&(train_df['Sex']=='female')&(train_df['Pclass']==2),'Age'] = median_female_2
+train_df.loc[(train_df['Age'].isnull())&(train_df['Sex']=='female')&(train_df['Pclass']==3),'Age'] = median_female_3
+
+
+# In[90]:
+
+
+train_df['Age'].isnull().sum()
+
+
+# In[49]:
+
+
+train_df.isnull().sum()
+
+
+# ---
+
+# > **Cabin의 결측치를 채우는 방법은 무엇이 있을까?**
+
+# In[91]:
+
+
+train_df['Cabin'].describe()
+
+
+# In[93]:
+
+
+train_df['Cabin'].sample(30)
+
+
+# In[94]:
+
+
+train_df.shape
+
+
+# > **Cabin 컬럼을 채우는 것이 의미가 있을까? 채워지는 데이터는 신뢰할 수 있는걸까?**
+
+# In[ ]:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# > **Q. Cabin 컬럼을 데이터 프레임에서 제거해보자.**
+
+# In[ ]:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# In[96]:
+
+
+train_df = train_df.drop(['Cabin'], axis=1)
+
+
+# > 생존에 예측에 도움이 되지 않는 다른 컬럼들도 제거해 보자.
+
+# In[99]:
+
+
+sns.heatmap(train_df.corr(), annot=True, cmap='coolwarm', linewidths=0.2);
+
+
+# In[55]:
+
+
+Image('images/titanic_meta1.png')
+
+
+# In[103]:
+
+
+train_df['Name'].sample(20)
+
+
+# > **Q. Name 컬럼의 정보들이 정말 예측에 도움이 되지 않을까?**
+
+# In[ ]:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# In[104]:
+
+
+train_df = train_df.drop(['PassengerId', 'Name', 'Ticket'], axis=1)
+
+
+# > 기존 데이터 셋의 정보를 이용하여 새로운 컬럼을 추가해보자(Feature Engineering!)
+
+# In[105]:
+
+
+train_df['Fsize'] = train_df['SibSp'] + train_df['Parch'] + 1
+
+
+# > Q. 새로 추가한 'Fsize' 컬럼이 대체하는 'SibSp'와 'Parch' 두 컬럼을 데이터 프레임에서 제거해 보자.
+
+# In[ ]:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# In[106]:
+
+
+train_df = train_df.drop(['SibSp','Parch'], axis=1)
+
+
+# In[107]:
+
+
+sns.heatmap(train_df.corr(), annot=True, cmap='coolwarm', linewidths=0.2);
+
+
+# In[108]:
+
+
+train_df.columns
+
+
+# > 기계학습을 위해 문자열을 숫자로 치환하여 보자.
+
+# In[109]:
+
+
+train_df['Sex'] = train_df['Sex'].replace(['male','female'], [0, 1])
+train_df['Embarked'] = train_df['Embarked'].replace(['S','C','Q'], [0, 1, 2])
+
+
+# In[110]:
+
+
+sns.heatmap(train_df.corr(), annot=True, cmap='coolwarm', linewidths=0.2);
+
+
+# > 전처리한 데이터를 가지고 기계학습을 통해 생존 여부를 예측해보자
+
+# In[112]:
+
+
+from sklearn.linear_model import LogisticRegression #logistic regression
+from sklearn import svm  #support vector Machine
+from sklearn.ensemble import RandomForestClassifier # Random Forest
+from sklearn.tree import DecisionTreeClassifier #Decision Tree
+from sklearn.model_selection import train_test_split #training and testing data split
+from sklearn import metrics #accuracy measure
+
+
+# In[114]:
+
+
+train, test = train_test_split(
+    train_df, test_size=0.3, random_state=2, stratify=train_df['Survived'])
+
+train_X = train[train.columns[1:]]
+train_Y = train[train.columns[:1]]
+
+test_X = test[test.columns[1:]]
+test_Y = test[test.columns[:1]]
+
+X = train_df[train_df.columns[1:]]
+Y = train_df['Survived']
+
+
+# In[116]:
+
+
+model = LogisticRegression()
+model.fit(train_X, train_Y)
+prediction1 = model.predict(test_X)
+print('The accuracy of the Logistic Regression is', 
+      metrics.accuracy_score(prediction1, test_Y))
+
+
+# In[117]:
+
+
+model = svm.SVC(kernel='linear', C=0.1, gamma=0.1)
+model.fit(train_X,train_Y)
+prediction2 = model.predict(test_X)
+print('Accuracy for linear SVM is', metrics.accuracy_score(prediction2, test_Y))
+
+
+# In[119]:
+
+
+model = DecisionTreeClassifier()
+model.fit(train_X, train_Y)
+prediction3 = model.predict(test_X)
+print('The accuracy of the Decision Tree is', metrics.accuracy_score(prediction3, test_Y))
+
+
+# In[ ]:
+
+
+from model import a
+
+
+# In[ ]:
+
+
+a.predict(data)
+
+
+# In[131]:
+
+
+model = RandomForestClassifier(n_estimators=340)
+model.fit(train_X,train_Y)
+
+prediction4 = model.predict(test_X)
+print('The accuracy of the Random Forests is', metrics.accuracy_score(prediction4, test_Y))
+
+
+# > 하이퍼 파라미터 튜닝(매개변수 최적화)을 통해 모델의 성능을 향상시켜보자.
+
+# In[133]:
+
+
+from sklearn.model_selection import GridSearchCV
+
+
+# In[134]:
+
+
+n_estimators = range(10, 500, 10)
+hyperparam = {'n_estimators': n_estimators}
+gd = GridSearchCV(estimator=RandomForestClassifier(random_state=2), param_grid=hyperparam, verbose=True)
+gd.fit(X,Y)
+print(gd.best_score_)
+print(gd.best_estimator_)
+
