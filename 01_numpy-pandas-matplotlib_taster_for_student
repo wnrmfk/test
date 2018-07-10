@@ -1,0 +1,817 @@
+
+# coding: utf-8
+
+# # 2일차 오전: NumPy/pandas/matplotlib Taster
+
+# In[15]:
+
+
+from IPython.display import Image
+
+
+# ---
+
+# # 수업의 목적
+
+# - 우리에겐 2일 밖에 안남았습니다.
+# - Python을 완벽하게 마스터 하겠다!는 아닙니다.
+# - **Python이라는 도구를 어디서 어떻게 활용할 것인가**
+# - **업무 중 생산된 데이터를 Python 이라는 도구로 어떻게 분석할 것인가**
+# - **Python 이라는 도구로 이런 것도 가능해? 이런 거하려면 이런 저런 패키지를 사용하면 되겠네?**
+# - 라는 아이디어를 얻어갔으면 좋겠습니다.
+# - 직접 실습을 하겠지만 2.5일 안에 마스터는 불가능하고 자가 학습이 가능할 정도의 아이디어를 가져갔으면 좋겠습니다.
+
+# # 오늘 수업의 목표
+
+# - 나는 오늘 numpy랑 pandas라는 패키지 맛을 좀 봤는데 엑셀이랑 비슷한 거 같아서 친숙했다.
+# - 나는 오늘 엑셀이랑 비슷한 pandas를 살펴보니 '아~ python으로 데이터 분석을 하면 자동화할 수 있겠구나'하며 조금은 이해를 했다.
+# - 나는 오늘 python으로 세탁기에서 나온 데이터를 통해 분석이란 걸 쫌 해봤다!
+# - 나는 오늘 python으로 설문자료 분석을 통해 유의미한 내용을 살펴볼 수 있었다!
+# - 나는 오늘 유익한 하루를 보냈다!
+
+# # 수업 시 필요한 것
+
+# ## 눈 보다는 손!!
+
+# ---
+
+# # 1. 필수 패키지
+
+# ## 1.1 소개
+
+# <img src="http://chdoig.github.io/ep2015-blaze/images/data-science-005.png">
+
+# 그림 출처: http://chdoig.github.io/ep2015-blaze/#/
+
+# 1. NumPy
+#     - Numerical Python
+#     - 과학계산용 패키지
+#     - 특징
+#         - 빠르고 효율적인 다차원 배열 객체 ndarray (n-dimensional array)
+#             - `[[1, 2], [1, 2], [[1, 2], [3, 4]]]`
+#         - 데이터 분석 시 데이터 컨테이너 역할(데이터를 담는 그릇)
+#     - 설치
+#         - `pip install numpy`
+# 2. pandas
+#     - 금융회사에 다니고 있던 Wes McKinney가 처음에 금융 데이터 분석을 위해 설계(2008년)
+#     - pandas: 계량 경제학 용어인 Panel Data와 Analysis의 합성어
+#     - Panel Data<sup>1</sup>
+#         - multi-dimensional data involving measurements over time (Wikipedia)
+#     - 구조화된 데이터를 빠르고 쉬우면서 다양한 형식으로 가공할 수 있는 풍부한 자료 구조와 함수를 제공한다.
+#     - pandas의 기본 구조는 NumPy로 되어있다.
+#     - 설치
+#         - `pip install pandas`
+# 3. matplotlib/seaborn/bokeh
+#     - 시각화 도구
+#     - 설치
+#         - `pip install matplotlib`
+#         - `pip install seaborn`
+#         - `pip install bokeh`
+
+# ## 1.2 NumPy/pandas/scikit-learn/Matplotlib... 떼려야 뗄 수 없는 그들의 관계
+
+# <img src="https://www.altexsoft.com/media/2017/08/%5E4275D3AF463329B3C66C6157C233DBF8F6B2BCCF49CC64ABE9%5Epimgpsh_fullsize_distr.png">
+
+# 1. Numpy
+#     - 빠르고 효율적인 다차원 배열 객체 ndarray (n-dimensional array)
+#     - [[1, 2], [1, 2], [[1, 2], [3, 4]]]
+#     - 데이터 분석 시 데이터 컨테이너 역할(데이터를 담는 그릇)
+# 2. SciPy
+#     - 과학 계산용 패키지
+#     - 최적화, 선형대수, 적분 등 과학 계산에 쓰이는 대부분이 있음
+#     - Numpy extension of Python
+# 3. pandas
+#     - Numpy에 기반한 패키지
+# 4. scikit-learn
+#     - SciPy에 기반한 머신러닝 프레임워크
+
+# <img src="http://s5047.pcdn.co/wp-content/uploads/2015/04/drop_shadows_background2.png">
+
+# ---
+
+# # 2. Data 전처리 관점에서 본다면
+
+# ## 2.1 Data Warehouse/Business Intelligence
+
+# In[17]:
+
+
+Image(url='http://www.data-warehouse.com.au/Images/Site/Data-Warehouse_Architecture_Simple_1200px.jpg')
+
+
+# ## 2.2 나의 부서에 맞는 데이터는 무엇이 있을까?
+
+# - 만약 세탁기에서 오는 데이터라면?
+# - Data Source: 세탁기
+# - Staging Area: WIFI를 통해서 IT부서에 Data 전달
+# - Data Mart: R&D부서에서 필요한 데이터를 만들어줌
+#     - 그런데 R&D부서만큼 IT부서가 데이터에 대한 이해도가 높을까?
+
+# In[18]:
+
+
+Image('images/capa_chart.png')
+
+
+# ---
+
+# # 3. NumPy 맛보기
+
+# In[2]:
+
+
+import numpy as np
+
+
+# - 데이터를 담는 그릇인 배열(Array)
+# - Python의 List/Tuple과 흡사
+# - 다차원 배열을 생성하기 간편하고 랜덤 생성 능력 등의 다양한 기능이 있음
+
+# ## 3.1 1차원 배열
+
+# In[3]:
+
+
+data = [1.0, 1.2, 3.1, 2.1, 2.8, 1.7, 0.5]  # list
+
+
+# In[4]:
+
+
+# array 객체 만들기 from list
+arr = np.array(data)
+
+
+# In[5]:
+
+
+arr
+
+
+# In[6]:
+
+
+arr.shape
+
+
+# In[7]:
+
+
+arr.ndim  # 차원
+
+
+# In[8]:
+
+
+arr = np.arange(10)  # 1차원 배열 생성
+arr
+
+
+# In[9]:
+
+
+arr.reshape(2, 5)  # 행, 열
+
+
+# In[53]:
+
+
+arr.reshape(3, 3)
+
+
+# > **Q. np.arange를 사용해서 보폭 2의 정수 2부터 20까지 나타내는 1차원 배열을 만들어보세요.**
+
+# In[10]:
+
+
+# 여기에 작성해보세요.
+
+
+# > **Q. 0부터 8까지의 1차원 행렬을 만들고 3행 3열짜리 모양으로 만들어보세요.**
+
+# In[59]:
+
+
+# 여기에 작성해보세요.
+
+
+# ## 3.2 다차원 배열(ndimentional array)
+
+# In[64]:
+
+
+data = [[1.0, 1.2], [3.1, 2.1], [2.8, 1.7]]
+
+
+# In[65]:
+
+
+arr = np.array(data)
+arr
+
+
+# In[66]:
+
+
+arr.shape  # 3개 행, 2개 열
+
+
+# In[67]:
+
+
+arr.ndim  # depth: 2
+
+
+# > **Q. 2x3 짜리 행렬을 만들어보세요 (데이터는 어떤 것이든 상관없음)**
+# 
+# > ex)
+# 
+# > ```python
+# array([[1, 1, 4],
+#        [1, 6, 1]])
+# ```
+
+# In[ ]:
+
+
+# 여기에 작성해보세요.
+
+
+# > **Q. integer(정수) 형식의 랜덤 수로 이뤄진 4x3 행렬을 만들어보세요.**
+# 
+# > 
+# ```
+# array([[4, 6, 5],
+#        [3, 2, 3]])
+# ```
+
+# In[ ]:
+
+
+# 여기에 작성해보세요.
+
+
+# ## 3.3 특수 행렬 생성
+
+# In[40]:
+
+
+np.ones(10)
+
+
+# In[41]:
+
+
+np.ones((3, 3))
+
+
+# In[42]:
+
+
+np.zeros((3, 5))
+
+
+# In[43]:
+
+
+np.eye(5, 5)
+
+
+# In[44]:
+
+
+np.arange(1, 4)
+
+
+# ## 3.4 Numpy를 이용한 분포
+
+# ### 1) 임의 정규 분포(arbitrary normal distribution)
+
+# In[66]:
+
+
+import matplotlib.pyplot as plt
+get_ipython().run_line_magic('matplotlib', 'inline')
+
+
+# In[114]:
+
+
+mu, sigma = 0, 0.1
+s = np.random.normal(mu, sigma, 10000)
+s
+
+
+# In[115]:
+
+
+plt.hist(s, bins=100)
+plt.show()
+
+
+# ### 2) 표준 정규 분포(standard normal distribution)
+
+# In[108]:
+
+
+data = np.random.randn(10000)
+data
+
+
+# In[109]:
+
+
+plt.hist(data, bins=20)  # 20개의 구간으로 나누어 히스토그램을 보이라는 의미
+plt.show()
+
+
+# ### 3) 사용 사례
+
+# - training data : test data = 7 : 3
+
+# In[116]:
+
+
+import pandas as pd
+
+
+# In[174]:
+
+
+df = pd.read_csv("data/sample_credit.csv")
+df.head()
+
+
+# In[144]:
+
+
+len(df)
+
+
+# In[145]:
+
+
+df.count()
+
+
+# In[147]:
+
+
+df.isnull().head(20)
+
+
+# In[148]:
+
+
+df.isnull().any()
+
+
+# In[175]:
+
+
+df.dropna(how='any', inplace=True)
+
+
+# In[151]:
+
+
+df.count()
+
+
+# > **Q. 100개의 데이터가 있습니다. 이 때 7:3 비율로 training data와 test data를 어떻게 나눌 수 있을까요?**
+# 
+# > 1. 앞에 70개, 뒤에 30개?
+# 2. 무작위로?
+# 3. 여러분들의 생각은?
+
+# In[ ]:
+
+
+
+
+
+
+
+
+
+
+
+# #### - Sample
+
+# In[176]:
+
+
+train = df.sample(frac=0.7)
+test = df.drop(train.index)
+
+
+# In[177]:
+
+
+len(train), len(test)
+
+
+# #### - random samples from a uniform distribution(default: 0~1)
+
+# In[162]:
+
+
+msk = np.random.rand(len(df)) <= 0.7
+train = df[msk]
+test = df[~msk]
+
+
+# In[164]:
+
+
+len(train), len(test)
+
+
+# #### - Uniform Distribution(균일 분포)
+
+# > **Q. numpy의 uniform distribution을 사용해서 만들어볼까요?**
+
+# In[ ]:
+
+
+# 여기에 작성해보세요.
+
+
+# #### - sklearn의 model_selection 이용하기
+
+# In[183]:
+
+
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+
+train, test = train_test_split(df, test_size=0.3)
+
+
+# > **Q. 왜 Machine Learning 시 Trainig Data와 Test Data를 잘 만들어야할까?**
+
+# In[ ]:
+
+
+
+
+
+# #### Machine Learning 과정
+
+# - Model을 만들기 위해 Trainig Data를 이용
+
+# <img src="images/ml.png">
+
+# #### 선을 긋는 행위: fitting
+
+# <img src="https://i2.wp.com/www.venturesquare.net/wp-content/uploads/2016/02/ml_fit.png?resize=702%2C223">
+
+# #### underfitting
+
+# 애기한테 공을 가르치는 경우
+# 
+# 1. 농구공
+# 2. 축구공
+# 3. 야구공
+# 4. 을 보며 동그란 건 공이다 라고 가르친다.
+# 5. 그랬더니 애기가...
+# 6. 사과도 공이고
+# 7. 지구도 공이라고 말한다.....
+# 
+# -> 이것을 underfitting이라고 한다.
+
+# #### good fit
+
+# 애기한테 공을 가르치는 경우
+# 
+# 1. 동그랗고
+# 2. 먹을 수 없고
+# 3. 놀 때 사용하는 것
+# 4. 이라고 애기한테 가르쳤더니...
+# 5. 애기가 잘 분류하더라.
+# 
+# -> 이것을 good fit이라고 한다.
+
+# #### overfitting
+
+# 좀 더 욕심을 내서
+# 
+# 1. 동그랗고
+# 2. 먹을 수 없고
+# 3. 놀 때 사용하는 것
+# 4. 바늘자국이 있고
+# 5. 지름이 70mm 이상이어야해.
+# 4. 라고 애기한테 가르쳤더니...
+# 5. 탁구공과 골프공을 공이라고 분류 못 하더라..
+# 
+# -> 이것을 overfitting이라고 한다.
+# 
+# -> 너무 많은 변수가 문제가 되므로 변수를 삭제하거나, training data를 늘리며 해결할 수 있다.
+
+# ---
+
+# # 4. pandas 맛보기
+
+# ## 4.1 History
+
+# - 2008년, AQR 투자 운용 회사(Capital Management)에 다니던 Wes McKinney가 개발 시작
+# - 2009년, 오픈 소스로 공개
+# - pandas: Panel Data Analysis의 약자
+#     - 횡단면 데이터(개별 단위의 데이터를 한 시점에 모은 것) + 시계열 데이터(특정 개별 주체의 데이터를 여러 시점에서 모은 것)
+#         - 예) 개별 기업의 주식 가격을 모은 것이 횡단면 데이터, 한 기업의 주가를 여러 기간에 걸쳐 기록하면 시계열 데이터이다.
+#     - pandas라는 이름을 Panel Data에서 가져왔다는 것에서 알 수 있듯, 금융 회사에 다니고 있었던 Wes McKinney는 금융 데이터를 분석하기에 적합하고 통합적인 기능을 제공하는 도구를 원함
+#     - Official documentation에는 모두 소문자(pandas)로 사용하고 있으므로 이 문서에도 pandas로 사용
+
+# ## 4.2 import and set
+
+# In[187]:
+
+
+import numpy as np
+import pandas as pd
+from pandas import DataFrame, Series
+
+# Set pandas options
+pd.set_option('display.notebook_repr_html', True)  # 기본값입니다. False로 하면 DataFrmae의 border=0
+pd.set_option('display.max_columns', 10)  # 10 이상 넘어가면 '...' 으로 표시, unlimit: None
+pd.set_option('display.max_rows', 10)
+
+
+# ## 4.3 Data Structure
+
+# ### 1) 종류
+
+# Dimensions|Name|Path
+# --|--|--|--
+# 1|Series|pandas.Series
+# 2|DataFrame|pandas.DataFrame
+
+# ### 2) DataFrame의 구성
+
+# <img src="http://bookdata.readthedocs.io/en/latest/_images/base_01_pandas_5_0.png">
+
+# ## 4.4 Series
+
+# ### 1) 생성
+
+# - 1차원만 가능하다
+
+# 첫 번쨰 컬럼|두 번째 컬럼
+# --|--
+# Index Label|Series 객체의 Value
+
+# In[185]:
+
+
+Series(['a', 'b', 'c', 'd'])
+
+
+# In[186]:
+
+
+Series(np.array(['a', 'b', 'c', 'd']))
+
+
+# In[187]:
+
+
+s = Series([10000, 2000, 30000, 40000], index=['Seatle', 'Seoul', 'San Hose', 'Beijing'])
+s
+
+
+# In[189]:
+
+
+s.index
+
+
+# In[190]:
+
+
+s.values
+
+
+# In[191]:
+
+
+s
+
+
+# ### 2) indexing and slicing
+
+# In[192]:
+
+
+s['Seoul']
+
+
+# In[195]:
+
+
+s[['Seatle', 'San Hose']]
+
+
+# In[197]:
+
+
+s['Seatle': 'San Hose']
+
+
+# ### 3) Time Series
+
+# In[189]:
+
+
+dates = pd.date_range('2016-05-01', '2016-05-07')
+dates
+
+
+# ## 4.5 DataFrame
+
+# ### 1) 생성
+
+# In[190]:
+
+
+tmp1 = Series([80, 92, 82, 85, 97, 84, 78], index=dates)
+
+
+# In[191]:
+
+
+tmp1
+
+
+# In[192]:
+
+
+tmp2 = Series(np.random.randint(60, 100, size=7), index=dates)
+
+
+# In[193]:
+
+
+tmp1
+
+
+# In[194]:
+
+
+tmp2
+
+
+# In[195]:
+
+
+quiz = DataFrame({
+        'Math': tmp1,
+        'Philosophy': tmp2
+    })
+quiz
+
+
+# ### 2) 데이터 살펴보기
+
+# In[80]:
+
+
+quiz['Math']
+
+
+# In[81]:
+
+
+quiz[['Philosophy', 'Math']]
+
+
+# In[82]:
+
+
+quiz['Math'][[1, 3]]
+
+
+# In[83]:
+
+
+quiz.Math
+
+
+# In[204]:
+
+
+quiz.columns
+
+
+# ### 3) 연산
+
+# In[196]:
+
+
+diff = quiz.Math - quiz.Philosophy
+diff
+
+
+# In[206]:
+
+
+avg = np.mean(quiz, axis=0)
+avg
+
+
+# ### 4) 컬럼 추가
+
+# In[88]:
+
+
+quiz['avg'] = avg
+quiz
+
+
+# ### 5) 데이터 찾기
+
+# In[89]:
+
+
+quiz.loc['2016-05-01']
+
+
+# In[90]:
+
+
+quiz.iloc[0]
+
+
+# In[208]:
+
+
+quiz[quiz.index >= '2016-05-03']
+
+
+# > **Q. 2016-05-03부터 2016-05-05짜리 데이터를 가져와보자.**
+
+# In[ ]:
+
+
+# 여기에 작성해보세요.
+
+
+# In[227]:
+
+
+quiz.Math > 90
+
+
+# In[228]:
+
+
+quiz[quiz.Math > 90]
+
+
+# In[229]:
+
+
+quiz[quiz.index < '2016-05-05']
+
+
+# In[230]:
+
+
+quiz[(quiz.index < '2016-05-05') & (quiz.Math > 90)]
+
+
+# ### 6) 그래프로 그려보기
+
+# In[197]:
+
+
+quiz.plot()
+
+
+# > **Q. plot size를 어떻게 늘릴 수 있을까요?**
+
+# In[ ]:
+
+
+# 여기에 작성해보세요.
+
+
+# > **Q. Title, X 라벨, Y 라벨도 넣어보자.**
+
+# In[ ]:
+
+
+# 여기에 작성해보세요.
+
+
+# > **Q. 다른 형태의 그래프는 어떻게 그릴 수 있을까요?**
+
+# In[ ]:
+
+
+# 여기에 작성해보세요.
+
+
+# ---
+
+# # CASE STUDY: pandas를 이용해 홍콩 주식 데이터 전처리
