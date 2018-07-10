@@ -1,0 +1,722 @@
+
+# coding: utf-8
+
+# # LG Washing Machine Dataset
+# 
+# ## 목적: 세탁기에서 생성된 Log Data를 분석해보자.
+# 
+# ---
+# 
+# ## 데이터 셋 정보 (Metadata)
+# 
+# - **washer.csv**: 세탁기에서 생성된 Log 데이터
+# - **metadata.csv**: washer.csv의 각 컬럼 내용에 대한 설명
+
+# ---
+
+# # 0. 작업 환경 설정하기
+
+# In[1]:
+
+
+import numpy as np  # 수학 관련 라이브러리
+import pandas as pd  # 데이터 입출력 및 처리 관련 라이브러리
+
+import matplotlib.pyplot as plt # 데이터 시각화를 Python 라이브러리
+import seaborn as sns  # 데이터 시각화를 Python 라이브러리
+
+from IPython.display import Image
+
+# matplotlib로 만들어지는 차트를 라인안에 넣는 명령어
+get_ipython().run_line_magic('matplotlib', 'inline')
+
+# 화면에 보이는 테이블 정보량 설정
+pd.set_option('max_rows', 30)  # row
+pd.set_option('max_columns', 15)  # column
+
+import warnings
+warnings.filterwarnings('ignore')
+
+from matplotlib.pylab import rcParams
+rcParams['figure.figsize'] = 12, 8
+rcParams['axes.grid'] = True
+
+
+# # 1. 데이터 탐색
+
+# ## 1.0 CSV 파일을 직접 보자
+
+# - 엑셀로 열어서 직접 보도록 하겠습니다.
+
+# ## 1.1 CSV 파일 읽어오기
+
+# In[140]:
+
+
+path = 'data/washing_machine/'
+df = pd.read_csv(path + 'washer.csv')
+
+
+# In[3]:
+
+
+df
+
+
+# ## 1.2 데이터 살펴보기
+
+# In[59]:
+
+
+df.info()
+
+
+# In[60]:
+
+
+df.shape
+
+
+# In[141]:
+
+
+df.head()
+
+
+# In[67]:
+
+
+df.columns
+
+
+# > **Q. metadata.csv 를 읽어보자.**
+
+# In[ ]:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# In[4]:
+
+
+path
+
+
+# In[5]:
+
+
+metadata = pd.read_csv(path + 'metadata.csv')
+
+
+# In[71]:
+
+
+type(metadata)
+
+
+# In[72]:
+
+
+metadata
+
+
+# > **Q. 읽어온 metadata 데이터 프레임의 크기가 어떻게 되는지 살펴보자**
+
+# In[ ]:
+
+
+# 여기에 해보세요.
+
+
+# In[ ]:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# In[74]:
+
+
+print('Size of data set: {} rows and {} columns'.format(*metadata.shape))
+
+
+# ## 1.3 정리
+
+# - 현재 데이터 만으로는 분석을 할만한 데이터가 많지는 않습니다.
+#     - 쓸만한 컬럼: create_dt_utc, device_id, event_type, APCourse
+#     - 삭제할 컬럼: category_code, model_name, regist_country, Error, Reserve_Time_H, Reserve_Time_M, FreshCare, Steam, RemoteStart, TurboShot, InitialBit
+#     - 그 외 컬럼: 판단하기 어려움, 무의미해 보임
+
+# ## 1.4 컬럼 삭제
+
+# In[142]:
+
+
+df = df.drop(columns=['category_code', 'model_name', 'regist_country'])
+
+
+# In[144]:
+
+
+df.shape
+
+
+# In[143]:
+
+
+df.columns
+
+
+# > **Q. Error, Reserve_Time_H, Reserve_Time_M, FreshCare, Steam, RemoteStart, TurboShot, InitialBit 컬럼을 데이터 프레임에서 제거하고 실제 제대로 제거가 됐는지 컬럼/크기 등을 살펴보자.**
+
+# In[ ]:
+
+
+# 여기에 작성해보세요.
+
+
+# In[ ]:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# In[145]:
+
+
+lst = ['Error', 
+       'Reserve_Time_H', 
+       'Reserve_Time_M', 
+       'FreshCare', 
+       'Steam', 
+       'RemoteStart', 
+       'TurboShot', 
+       'InitialBit']
+
+
+# In[146]:
+
+
+df = df.drop(lst, axis=1)
+
+
+# In[147]:
+
+
+df.shape
+
+
+# In[148]:
+
+
+df.columns
+
+
+# ## 1.5 이렇게 말고 원하는 컬럼만 복사해볼까요!?
+
+# In[51]:
+
+
+# 원하는 컬럼 한 개만 선택할 때
+df['device_id']
+
+
+# In[149]:
+
+
+# 원하는 컬럼 여러 개 선택할 때
+df[
+    ['create_dt_utc', 'device_id', 'event_type', 'APCourse']
+].head()
+
+
+# In[150]:
+
+
+df.head()
+
+
+# <img src="data:image/jpeg;base64,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">
+
+# > **! 분명히 원하는 컬럼만 선택했는데........**
+
+# In[151]:
+
+
+df[
+    ['create_dt_utc', 'device_id', 'event_type', 'APCourse']
+].head()
+
+
+# > **! 원하는 컬럼만 필터링해서 잠깐 보여주고 만겁니다 ! (적용이 안되었음)**
+# 
+# > ** -> 필터링된 것을 다시 df에 할당해주면 됨 **
+
+# In[152]:
+
+
+# 원하는 컬럼을 선택해서 다시 df에 할당해줌
+df = df[
+    ['create_dt_utc', 'device_id', 'event_type', 'APCourse']
+]
+
+
+# In[153]:
+
+
+df.head()
+
+
+# In[154]:
+
+
+df.count()
+
+
+# ---
+
+# ## 1.5 Grouping
+
+# - 지금까지 데이터를 새로 생성하고 필요없는 컬럼은 삭제하는 등의 전처리를 진행했습니다.
+# - 이번에는 **로그가 발생한 device id별 유형(event_type)**이 어떤 것들이 있는지 살펴보겠습니다.
+
+# In[155]:
+
+
+df.head()
+
+
+# In[137]:
+
+
+df['event_type'].value_counts()
+
+
+# > **어떤 device이든 상관없이 event_type을 세는 것이 아니라 device_id별 event_type 개수는 어떻게 셀 수 있을까요? 엑셀 pivot table 하듯이 하면 됩니다!**
+
+# In[52]:
+
+
+# 세탁기 5대
+df['device_id'].unique()
+
+
+# In[53]:
+
+
+# event_type 종류
+df['event_type'].unique()
+
+
+# In[138]:
+
+
+df.groupby(['device_id', 'event_type']).size()
+
+
+# > **그런데 이렇게 보니깐 불편합니다! 피봇해보겠습니다! event_type을 컬럼으로 배치시키겠습니다!**
+
+# In[49]:
+
+
+# unstack: pivot한 것과 같습니다!
+df.groupby(['device_id', 'event_type']).size().unstack()
+
+
+# > **NaN이 있으니깐 보이기에 예쁘지 않네요! 0으로 바꿔보겠습니다!**
+
+# In[50]:
+
+
+df.groupby(['device_id', 'event_type']).size().unstack(fill_value=0)
+
+
+# > **Q. 비록 데이터 수가 부족하지만... 그나마 있는 위 데이터를 통해서 인사이트를 구해봅시다. 어떤 유의미한 결과가 있는 것 같나요?**
+# 
+# > 합리적 의심
+# 
+# > 1. WM_STATE가 무엇을 의미하는지는 모르겠지만 세탁기마다 많은 log가 있다.
+# 2. A3 세탁기의 WM_ERROR/WM_PAUSE 이벤트가 다른 세탁기에 비해 유독(?) 많다. 뭔가 이상이 있나?
+# 3. WM_WASH_BEGIN 이벤트와 WM_WASH_END 이벤트가 동일하지 않다. 맞는 데이터인가? 혹시 wifi로 신호를 제대로 주지 않은 건가? 무슨 문제가 있나?
+
+# > **만약에 말이야...**
+# 
+# > **만약에 데이터가 더 풍부했으면 좋았을 겁니다. WM_ERROR도 해당 에러가 어떤 에러인지 알았으면 에러에 더 분석을 해보면 좋았을텐데 말이죠.**
+# 
+# > **그래서 위 데이터를 보고 구체적인 ERROR 내용에 대해 로그 데이터 남기는 것을 제안하는 것도 좋을 것 같습니다.**
+
+# In[156]:
+
+
+# df는 여전히.. 그 때 모습 그대로입니다.
+df.head()
+
+
+# ## 1.6 탐색: 일시중지('WM_PAUSE') Log가 가장 많은 기계의 device_id를 찾아보자.
+
+# - 위에서 groupby/unstack을 통해 나온 데이터에서 눈으로 탐색하는 모습 말고, 직접 코딩으로 찾아보겠습니다.
+
+# In[97]:
+
+
+df[df['event_type'] == 'WM_PAUSE']
+
+
+# > df[조건식]
+# 
+# > 조건식 = True/False 형태
+
+# In[99]:
+
+
+df[df['event_type'] == 'WM_PAUSE']['device_id']
+
+
+# > **Q. 드디어 일시중지인 device id를 찾았습니다! WM_PAUSE에 해당하는 해당 데이터를 device id별로 개수를 세어보세요. 어떻게 할 수 있을까요? 맨위에서 하긴 했어요...**
+
+# In[ ]:
+
+
+# 여기에 작성해보세요.
+
+
+# In[ ]:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# > **Q. 어느 기계(device id)에 가장 많은 에러('WM_ERROR') Log가 기록되어 있을까?**
+
+# In[ ]:
+
+
+# 여기에 작성해보세요.
+
+
+# In[ ]:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# ## 1.7 탐색: 어느 시간대에 Log가 많이 쌓였을까?
+
+# ### 시간 데이터 타입을 확인해보자.
+
+# In[108]:
+
+
+df['create_dt_utc']
+
+
+# In[109]:
+
+
+df['create_dt_utc'][0]
+
+
+# In[110]:
+
+
+type(df['create_dt_utc'][0])
+
+
+# ### - String을 Datetime 형식으로 바꾸자.
+
+# In[60]:
+
+
+df['create_dt_utc'] = pd.to_datetime(df['create_dt_utc'])
+
+
+# In[61]:
+
+
+df['create_dt_utc']
+
+
+# In[113]:
+
+
+df['create_dt_utc'][0]
+
+
+# In[114]:
+
+
+type(df['create_dt_utc'][0])
+
+
+# ### 시간 대(Grouper)를 만들기 위해 4시간 단위로 Grouping 해볼께요~
+
+# In[62]:
+
+
+grouper = pd.Grouper(key='create_dt_utc', freq='14400s')  # 14400s = 4hrs
+
+
+# In[63]:
+
+
+freq = df.groupby(grouper)
+
+
+# In[64]:
+
+
+freq
+
+
+# In[65]:
+
+
+freq['create_dt_utc']
+
+
+# > **groupby 명령어는 그 자체만으로는 아무것도 없어 보입니다. 엑셀 피봇테이블과 똑같지 않습니까? 그루핑만 하면 아무 소용없습니다. aggregate function이 필요합니다.**
+
+# In[68]:
+
+
+freq['create_dt_utc'].count()
+
+
+# In[69]:
+
+
+freq = freq['create_dt_utc'].count()
+
+
+# In[70]:
+
+
+freq
+
+
+# In[68]:
+
+
+type(freq)
+
+
+# In[71]:
+
+
+freq.plot(kind='bar', figsize=(15, 7))
+
+
+# > 새벽 시간대에 Log 기록이 왜 많은 걸까?
+# >
+# > 이상하다. 너무 새벽 시간대이다.
+# >
+# > 혹시 데이터가 이상한 건 아닌지 의심할 필요가 있을 것 같다.
+# >
+# > 그런데 지금까지 그냥 지나쳤는데 시간이 UTC로 되어있어서 그런건 아닐까?
+# >
+# > UTC: 협정세계시
+
+# In[73]:
+
+
+import time
+
+
+# In[72]:
+
+
+time.timezone  # 컴퓨터에 설정된 타임존과 UTC의 차이 (단위: 초) (UTC - Current Timezone)
+
+
+# In[72]:
+
+
+from datetime import timedelta
+
+
+# In[74]:
+
+
+timedelta(seconds=32400)
+
+
+# In[76]:
+
+
+df['create_dt_utc'] + timedelta(seconds=32400)  # +9hrs
+
+
+# > **Q. 한국 시각으로 변경한 데이터를 create_dt_kst 라는 새로운 컬럼에 넣어보자**
+
+# In[ ]:
+
+
+# 여기에 직접 작성해보세요.
+
+
+# > **Q. 한국 시각으로 변경된 데이터를 가지고 아래와 같은 그래프를 그려보자.**
+
+# In[85]:
+
+
+
+
+
+# In[1]:
+
+
+# write your cown cod
+
+
+# In[85]:
+
+
+# 결과
+
+
+# > **세탁코스(APCourse)는 현재 숫자형태로 되어있는데 이를 범주형 데이터로 바꿔보겠습니다. (임의 데이터)**
+
+# In[83]:
+
+
+df['APCourse'].value_counts().index
+
+
+# In[92]:
+
+
+cources = {1: '표준세탁', 0: '찌든때', 3: '알뜰삶음', 13: '스피드워시', 8: '알러지케어',
+           9: '스팀클리닝', 5: '기능성의류', 16: '컬러케어', 6: '찬물세탁', 2: '란제리/울', 10: '이불', 12: '헹굼/탈수'}
+
+
+# In[97]:
+
+
+df['APCourse'] = df['APCourse'].apply(lambda x: cources.get(x))
+
+
+# In[98]:
+
+
+df.head()
+
+
+# > **Q. 각자 device 별로 세탁코스(APCourse)를 카운팅을 해보고 데이터의 이상점/특이점을 찾아보세요.**
+
+# In[ ]:
+
+
+# 여기에서부터 작성해보세요~
+
