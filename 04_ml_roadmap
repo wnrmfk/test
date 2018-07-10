@@ -1,0 +1,543 @@
+
+# coding: utf-8
+
+# # 머신러닝 및 딥러닝 프레임워크 비교
+
+# ## 머신러닝 프레임워크
+# 
+# - 데이터 전처리(Preprocessing), 회귀분석(Regression), 분류(Classification) 및 군집(Clustering) 등 머신러닝에 필요한 다양한 학습 방법들을 포함하고 있으나 인공 신경망(Neural Network)에 대한 지원은 부족한 경우가 많음
+# - Scikit-Learn, Spark MLlib 등이 있음
+
+# ## Scikit-Learn
+# ![Scikit-Learn](http://www.scipy-lectures.org/_images/scikit-learn-logo.png)
+# 
+# - 2007년 Google에서 David Cournapeau에 의해 Summer of Code 프로젝트 가운데 하나로 시작됨
+# - 가장 대중적이며 추천할 만한 파이썬 머신러닝 프레임 워크
+# - GPU 미지원
+# - 인공 신경망 관련 기능은 제한적으로 제공
+# - http://scikit-learn.org
+
+# ## Spark MLlib
+# ![spark](https://spark.apache.org/images/spark-logo-trademark.png)
+# 
+# - University of California, Berkeley의 AMPLab에서 시작됨
+# - 메모리를 이용한 빅데이터 분산 처리를 가능케한 SPark에서 제공하는 머신러닝 라이브러리
+# - 빅데이터를 위해 나온 오픈소스 프로젝트인 만큼 데이터 파이프 라인 및 전처리 관련 기능들이 강력함
+# - 딥러닝 관련 기능들은 매우 부족
+# - https://spark.apache.org/mllib
+
+# ## 딥러닝 프레임워크
+# 
+# - 머신러닝의 한 분야로 최근 가장 핫한 분야인 딥러닝을 지원하는 프레임 워크들
+# - 사람의 뇌에 존재하는 뉴런의 연결 구조에서 착안한 인공 신경망(artificial neural network)을 기반으로 함
+# - Theano, TensorFlow, PyTorch, Caffe, Keras, MxNet 등이 있음
+# - 이미지 분류 작업 등의 여러 분야에 있어서 이미 인간보다 뛰어난 성능을 발휘함
+# ![cupcake_or_dog](images/cupcake.jpeg)
+# ![ic](images/image_classification.png)
+# 
+
+# ## Theano
+# ![Theano](https://static.wixstatic.com/media/5dad68_5c07902c506f4ee0988eb65a95942617~mv2.png/v1/fill/w_580,h_134,al_c,lg_1/5dad68_5c07902c506f4ee0988eb65a95942617~mv2.png)
+# 
+# - 최초의 딥러닝 라이브러리 중 하나
+# - Theano는 Numpy와 같은 다차원 배열을 다루며 데이터 탐색에 적합하여 다른 라이브러리와 함께 주로 연구용으로 개발되어 사용됨
+# - 다른 확장 학습 프레임워크와 달리 확장성이 뛰어나지 않으며 다중 GPU 지원이 부족함
+# - http://deeplearning.net/software/theano
+
+# ## TensorFlow
+# ![TF](https://avatars0.githubusercontent.com/u/15658638?s=200&v=4)
+# 
+# - Google은 Theano를 대체하고자 만들어진 프레임워크
+# - 현재 가장 인기있는 딥러닝 라이브러리 중 하나로 Google에서 내부용으로 개발되었다가 2015년 오픈소스로 공개됨
+# - 딥러닝 외에도 강화학습(Reinforcement Learning) 등 다양한 알고리즘을 지원하며 확장성이 뛰어남
+# - 최신 딥러닝 도구에 비해 다중 GPU 처리 속도가 느림
+# - https://www.tensorflow.org
+
+# ## Keras
+# ![Keras](https://s3.amazonaws.com/keras.io/img/keras-logo-2018-large-1200.png)
+# 
+# - Google의 Software Engineer인 François Chollet에 의해 개발됨 
+# - Keras는 효율적인 신경망 구축을 위한 단순화 된 인터페이스로 개발됨
+# - 저레벨(Low-level) 언어인 Theano와 TensorFlow등 다른 딥러닝 프레임워크들을 백엔드(back-end)로 사용하기 편하게 해주는 Wrapper로서의 기능을 함
+# - https://keras.io
+
+# # 직접 딥러닝 알고리즘을 실행시켜보자
+# 
+# https://playground.tensorflow.org
+
+# In[6]:
+
+
+from IPython.display import Image  # 주피터 노트북에 이미지 삽입을 위한 라이브러리
+Image('images/tf_playground.png')
+
+
+# # cognitive_face 라이브러리 설치
+# ## !pip install --user cognitive_face
+
+# In[13]:
+
+
+# 사람 얼굴 인식하기
+
+
+# https://www.telegraph.co.uk/content/dam/news/2018/05/06/TELEMMGLPICT000162328279_trans_NvBQzQNjv4BqMNXAjrQuC5hshkZY4lLDITLc2RSN87h2tEpyeVqDDtY.jpeg
+# ![test](https://www.telegraph.co.uk/content/dam/news/2018/05/06/TELEMMGLPICT000162328279_trans_NvBQzQNjv4BqMNXAjrQuC5hshkZY4lLDITLc2RSN87h2tEpyeVqDDtY.jpeg)
+# 
+
+# In[1]:
+
+
+import cognitive_face as CF
+
+KEY = 'e7c4a6bd224348cfbce077f240700e96'  # API 키
+CF.Key.set(KEY)
+
+BASE_URL = 'https://westcentralus.api.cognitive.microsoft.com/face/v1.0/'
+CF.BaseUrl.set(BASE_URL)
+
+
+# In[2]:
+
+
+# 사진 주소에 원하는 사진의 url 주소를 적으면 그 사진을 가지고 와서 사람의 얼굴을 인식하는 지 여부를 알 수 있다.
+img_url = 'https://www.telegraph.co.uk/content/dam/news/2018/05/06/TELEMMGLPICT000162328279_trans_NvBQzQNjv4BqMNXAjrQuC5hshkZY4lLDITLc2RSN87h2tEpyeVqDDtY.jpeg'
+faces = CF.face.detect(img_url)
+print(faces)
+
+
+# In[38]:
+
+
+# 얼굴 인식하여 얼굴 주변에 사각형 표시하기
+
+
+# pip install pillow
+
+# In[5]:
+
+
+import requests
+from io import BytesIO
+from PIL import Image, ImageDraw
+
+
+# In[4]:
+
+
+#Convert width height to a point in a rectangle
+def getRectangle(faceDictionary):
+    rect = faceDictionary['faceRectangle']
+    left = rect['left']
+    top = rect['top']
+    bottom = left + rect['height']
+    right = top + rect['width']
+    return ((left, top), (bottom, right))
+
+#Download the image from the url
+response = requests.get(img_url)
+img = Image.open(BytesIO(response.content))
+
+#For each face returned use the face rectangle and draw a red box.
+draw = ImageDraw.Draw(img)
+for face in faces:
+    draw.rectangle(getRectangle(face), outline='red')
+
+#Display the image in the users default image browser.
+img.show()
+
+
+# # Computer Vision
+
+# In[6]:
+
+
+subscription_key = 'e7fcdc4db22647d5a8c469114c0c2484'
+assert subscription_key
+
+
+# In[7]:
+
+
+vision_base_url = "https://westcentralus.api.cognitive.microsoft.com/vision/v1.0/"
+
+
+# In[8]:
+
+
+vision_analyze_url = vision_base_url + "analyze"
+
+
+# https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Broadway_and_Times_Square_by_night.jpg/450px-Broadway_and_Times_Square_by_night.jpg
+# ![test](https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Broadway_and_Times_Square_by_night.jpg/450px-Broadway_and_Times_Square_by_night.jpg)
+# 
+
+# In[9]:
+
+
+image_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Broadway_and_Times_Square_by_night.jpg/450px-Broadway_and_Times_Square_by_night.jpg"
+
+
+# In[10]:
+
+
+import requests
+headers  = {'Ocp-Apim-Subscription-Key': subscription_key }
+params   = {'visualFeatures': 'Categories,Description,Color'}
+data     = {'url': image_url}
+response = requests.post(vision_analyze_url, headers=headers, params=params, json=data)
+response.raise_for_status()
+analysis = response.json()
+
+
+# In[11]:
+
+
+image_caption = analysis["description"]["captions"][0]["text"].capitalize()
+print(image_caption)
+
+
+# https://www.telegraph.co.uk/content/dam/news/2018/05/06/TELEMMGLPICT000162328279_trans_NvBQzQNjv4BqMNXAjrQuC5hshkZY4lLDITLc2RSN87h2tEpyeVqDDtY.jpeg
+# ![test](https://www.telegraph.co.uk/content/dam/news/2018/05/06/TELEMMGLPICT000162328279_trans_NvBQzQNjv4BqMNXAjrQuC5hshkZY4lLDITLc2RSN87h2tEpyeVqDDtY.jpeg)
+# 
+
+# In[12]:
+
+
+image_url = "https://www.telegraph.co.uk/content/dam/news/2018/05/06/TELEMMGLPICT000162328279_trans_NvBQzQNjv4BqMNXAjrQuC5hshkZY4lLDITLc2RSN87h2tEpyeVqDDtY.jpeg"
+
+
+# In[13]:
+
+
+import requests
+headers  = {'Ocp-Apim-Subscription-Key': subscription_key }
+params   = {'visualFeatures': 'Categories,Description,Color'}
+data     = {'url': image_url}
+response = requests.post(vision_analyze_url, headers=headers, params=params, json=data)
+response.raise_for_status()
+analysis = response.json()
+
+
+# In[36]:
+
+
+image_caption = analysis["description"]["captions"][0]["text"].capitalize()
+print(image_caption)
+
+
+# In[17]:
+
+
+get_ipython().run_line_magic('matplotlib', 'inline')
+from PIL import Image
+from io import BytesIO
+import matplotlib.pyplot as plt
+image = Image.open(BytesIO(requests.get(image_url).content))
+plt.imshow(image)
+plt.axis("off")
+_ = plt.title(image_caption, size="x-large", y=-0.1)
+
+
+# In[42]:
+
+
+model_url = vision_base_url + "models"
+headers   = {'Ocp-Apim-Subscription-Key': subscription_key}
+models    = requests.get(model_url, headers=headers).json()
+[model["name"] for model in models["models"]]
+
+
+# # 관광명소 인식
+
+# In[18]:
+
+
+image_url = "https://upload.wikimedia.org/wikipedia/commons/f/f6/Bunker_Hill_Monument_2005.jpg"
+landmark_analyze_url = vision_base_url + "models/landmarks/analyze"
+print(landmark_analyze_url)
+
+
+# In[19]:
+
+
+headers  = {'Ocp-Apim-Subscription-Key': subscription_key}
+params   = {'model': 'landmarks'}
+data     = {'url': image_url}
+response = requests.post(landmark_analyze_url, headers=headers, params=params, json=data)
+response.raise_for_status()
+
+analysis      = response.json()
+assert analysis["result"]["landmarks"] is not []
+
+landmark_name = analysis["result"]["landmarks"][0]["name"].capitalize()
+
+
+# In[ ]:
+
+
+image = Image.open(BytesIO(requests.get(image_url).content))
+plt.imshow(image)
+plt.axis("off")
+_ = plt.title(landmark_name, size="x-large", y=-0.1)
+
+
+# # 유명인사 인식
+
+# https://upload.wikimedia.org/wikipedia/commons/d/d9/Bill_gates_portrait.jpg
+# ![](https://upload.wikimedia.org/wikipedia/commons/d/d9/Bill_gates_portrait.jpg)
+
+# In[47]:
+
+
+image_url = "https://upload.wikimedia.org/wikipedia/commons/d/d9/Bill_gates_portrait.jpg"
+celebrity_analyze_url = vision_base_url + "models/celebrities/analyze"
+print(celebrity_analyze_url)
+
+
+# In[48]:
+
+
+headers  = {'Ocp-Apim-Subscription-Key': subscription_key}
+params   = {'model': 'celebrities'}
+data     = {'url': image_url}
+response = requests.post(celebrity_analyze_url, headers=headers, params=params, json=data)
+response.raise_for_status()
+
+analysis = response.json()
+
+
+# In[49]:
+
+
+print(analysis)
+
+
+# In[50]:
+
+
+assert analysis["result"]["celebrities"] is not []
+celebrity_info = analysis["result"]["celebrities"][0]
+celebrity_name = celebrity_info["name"]
+celebrity_face = celebrity_info["faceRectangle"]
+
+
+# In[51]:
+
+
+from matplotlib.patches import Rectangle
+plt.figure(figsize=(5,5))
+
+image  = Image.open(BytesIO(requests.get(image_url).content))
+ax     = plt.imshow(image, alpha=0.6)
+origin = (celebrity_face["left"], celebrity_face["top"])
+p      = Rectangle(origin, celebrity_face["width"], celebrity_face["height"], 
+                   fill=False, linewidth=2, color='b')
+ax.axes.add_patch(p)
+plt.text(origin[0], origin[1], celebrity_name, fontsize=20, weight="bold", va="bottom")
+_ = plt.axis("off")
+
+
+# http://dailypost.ng/wp-content/uploads/2016/05/nbc-fires-donald-trump-after-he-calls-mexicans-rapists-and-drug-runners.jpg
+# ![](http://dailypost.ng/wp-content/uploads/2016/05/nbc-fires-donald-trump-after-he-calls-mexicans-rapists-and-drug-runners.jpg)    
+
+# In[78]:
+
+
+image_url = "http://dailypost.ng/wp-content/uploads/2016/05/nbc-fires-donald-trump-after-he-calls-mexicans-rapists-and-drug-runners.jpg"
+celebrity_analyze_url = vision_base_url + "models/celebrities/analyze"
+print(celebrity_analyze_url)
+
+
+# In[79]:
+
+
+headers  = {'Ocp-Apim-Subscription-Key': subscription_key}
+params   = {'model': 'celebrities'}
+data     = {'url': image_url}
+response = requests.post(celebrity_analyze_url, headers=headers, params=params, json=data)
+response.raise_for_status()
+
+analysis = response.json()
+
+
+# In[80]:
+
+
+print(analysis)
+
+
+# In[81]:
+
+
+assert analysis["result"]["celebrities"] is not []
+celebrity_info = analysis["result"]["celebrities"][0]
+celebrity_name = celebrity_info["name"]
+celebrity_face = celebrity_info["faceRectangle"]
+
+
+# In[82]:
+
+
+from matplotlib.patches import Rectangle
+plt.figure(figsize=(5,5))
+
+image  = Image.open(BytesIO(requests.get(image_url).content))
+ax     = plt.imshow(image, alpha=0.6)
+origin = (celebrity_face["left"], celebrity_face["top"])
+p      = Rectangle(origin, celebrity_face["width"], celebrity_face["height"], 
+                   fill=False, linewidth=2, color='b')
+ax.axes.add_patch(p)
+plt.text(origin[0], origin[1], celebrity_name, fontsize=20, weight="bold", va="bottom")
+_ = plt.axis("off")
+
+
+# In[52]:
+
+
+image_url = "https://upload.wikimedia.org/wikipedia/commons/9/94/Bloodhound_Puppy.jpg"
+thumbnail_url = vision_base_url + "generateThumbnail"
+print(thumbnail_url)
+
+
+# In[53]:
+
+
+headers  = {'Ocp-Apim-Subscription-Key': subscription_key}
+params   = {'width': '250', 'height': '250','smartCropping': 'true'}
+data     = {'url': image_url}
+response = requests.post(thumbnail_url, headers=headers, params=params, json=data)
+response.raise_for_status()
+
+
+# In[54]:
+
+
+thumbnail = Image.open(BytesIO(response.content))
+print("Thumbnail is {0}-by-{1}".format(*thumbnail.size))
+thumbnail
+
+
+# # OCR
+
+# https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Atomist_quote_from_Democritus.png/338px-Atomist_quote_from_Democritus.png
+# ![](https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Atomist_quote_from_Democritus.png/338px-Atomist_quote_from_Democritus.png)
+
+# In[55]:
+
+
+image_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Atomist_quote_from_Democritus.png/338px-Atomist_quote_from_Democritus.png"
+ocr_url = vision_base_url + "ocr"
+print(ocr_url)
+
+
+# In[56]:
+
+
+headers  = {'Ocp-Apim-Subscription-Key': subscription_key}
+params   = {'language': 'unk', 'detectOrientation ': 'true'}
+data     = {'url': image_url}
+response = requests.post(ocr_url, headers=headers, params=params, json=data)
+response.raise_for_status()
+
+analysis = response.json()
+
+
+# In[57]:
+
+
+line_infos = [region["lines"] for region in analysis["regions"]]
+word_infos = []
+for line in line_infos:
+    for word_metadata in line:
+        for word_info in word_metadata["words"]:
+            word_infos.append(word_info)
+word_infos
+
+
+# In[58]:
+
+
+plt.figure(figsize=(5,5))
+
+image  = Image.open(BytesIO(requests.get(image_url).content))
+ax     = plt.imshow(image, alpha=0.5)
+for word in word_infos:
+    bbox = [int(num) for num in word["boundingBox"].split(",")]
+    text = word["text"]
+    origin = (bbox[0], bbox[1])
+    patch  = Rectangle(origin, bbox[2], bbox[3], fill=False, linewidth=2, color='y')
+    ax.axes.add_patch(patch)
+    plt.text(origin[0], origin[1], text, fontsize=20, weight="bold", va="top")
+_ = plt.axis("off")
+
+
+# # 필기체 인식
+
+# https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Cursive_Writing_on_Notebook_paper.jpg/800px-Cursive_Writing_on_Notebook_paper.jpg
+# ![](https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Cursive_Writing_on_Notebook_paper.jpg/800px-Cursive_Writing_on_Notebook_paper.jpg)
+
+# In[59]:
+
+
+image_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Cursive_Writing_on_Notebook_paper.jpg/800px-Cursive_Writing_on_Notebook_paper.jpg"
+
+
+# In[60]:
+
+
+text_recognition_url = vision_base_url + "RecognizeText"
+print(text_recognition_url)
+
+
+# In[61]:
+
+
+headers  = {'Ocp-Apim-Subscription-Key': subscription_key}
+params   = {'handwriting' : True}
+data     = {'url': image_url}
+response = requests.post(text_recognition_url, headers=headers, params=params, json=data)
+response.raise_for_status()
+
+
+# In[62]:
+
+
+operation_url = response.headers["Operation-Location"]
+
+
+# In[63]:
+
+
+import time
+
+analysis = {}
+while not "recognitionResult" in analysis:
+    response_final = requests.get(response.headers["Operation-Location"], headers=headers)
+    analysis       = response_final.json()
+    time.sleep(1)
+
+
+# In[64]:
+
+
+polygons = [(line["boundingBox"], line["text"]) for line in analysis["recognitionResult"]["lines"]]
+
+
+# In[65]:
+
+
+from matplotlib.patches import Polygon
+
+plt.figure(figsize=(15,15))
+
+image  = Image.open(BytesIO(requests.get(image_url).content))
+ax     = plt.imshow(image)
+for polygon in polygons:
+    vertices = [(polygon[0][i], polygon[0][i+1]) for i in range(0,len(polygon[0]),2)]
+    text     = polygon[1]
+    patch    = Polygon(vertices, closed=True,fill=False, linewidth=2, color='y')
+    ax.axes.add_patch(patch)
+    plt.text(vertices[0][0], vertices[0][1], text, fontsize=20, va="top")
+_ = plt.axis("off")
+
