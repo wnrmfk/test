@@ -1,0 +1,1644 @@
+
+# coding: utf-8
+
+# # 1일차 오후: Python 기초 문법
+
+# In[1]:
+
+
+from IPython.display import Image
+
+
+# ---
+
+# # 수업의 목적
+
+# - 우리에겐 2.5일 밖에 없습니다.
+# - Python을 완벽하게 마스터 하겠다!는 아닙니다.
+# - **Python이라는 도구를 어디서 어떻게 활용할 것인가**
+# - **업무 중 생산된 데이터를 Python 이라는 도구로 어떻게 분석할 것인가**
+# - **Python 이라는 도구로 이런 것도 가능해? 이런 거하려면 이런 저런 패키지를 사용하면 되겠네?**
+# - 라는 아이디어를 얻어갔으면 좋겠습니다.
+# - 직접 실습을 하겠지만 2.5일 안에 마스터는 불가능하고 자가 학습이 가능할 정도의 아이디어를 가져갔으면 좋겠습니다.
+
+# # 오늘 수업의 목적
+
+# - 나는 오늘 데이터 사이언스의 필요성과 중요성 인식했다.
+# - 나는 오늘 데이터 사이언스에서 Python을 활용하는 큰 그림을 알 것만 같다.
+# - 나는 오늘 Python을 어떻게 설치하는지 알았고 패키지를 설치하는 방법을 배웠다.
+# - **나는 오늘 Python의 기본적인 문법을 살펴봤고 실습을 통해 프로그래밍한다는 게 뭔지 좀 알게 됐다.**
+# - 나는 오늘 실습을 통해 Jupyter Notebook의 기본적인 사용방법을 익혔다.
+# - **나는 오늘 드디어 Python을 맛 보았다.** 유익한 하루였다.
+
+# # Python 기초 문법을 공부하는 목적
+
+# - 우리는 Python의 pandas 패키지를 이용할 겁니다.
+# - 그런데 pandas는 만능이 아닙니다.
+# - pandas을 적절히 이용할 줄 아는 능력이 필요합니다.
+# - 때로는 pandas 패키지에는 없는 기능을 만들수도 있습니다.
+# - 그래서 기초 문법을 알아야 합니다.
+
+# # 수업 필수지참
+
+# ## 눈 보다는 손!!
+
+# ---
+
+# # 1. Python 기초
+
+# ## 1.1 조건문
+
+# **Javascript**
+
+# ```javascript
+# if (money > 3000){
+#     # statements
+# }
+# ```
+
+# **Python**
+
+# In[2]:
+
+
+money = 10000
+if money > 3000:  # 조건문
+    # 참일 경우
+    print('택시타기')
+    print('카카오택시 콜')
+else:
+    # 거짓일 경우
+    print('버스타기')
+    print('걸어가기')
+
+
+# In[13]:
+
+
+is_there_money = True
+if is_there_money:  # if True
+    print('택시타기')
+else:
+    print('버스타기')
+
+
+# In[18]:
+
+
+money = 3000
+if money == 3000:
+    print('버스타기')
+else:
+    print('택시타기')
+
+
+# In[12]:
+
+
+age = 60
+if age >= 50:
+    print('%d살: 50대 이상!' % age)  # 치환자(formatter)
+elif 40 <= age < 50:
+    print('{}살: 40대!'.format(age))  # foramt: 치환자!
+elif 30 <= age < 40:
+    print('{}살: 30대!'.format(age))
+else:
+    print('{}살: 20대나 10대군요?'.format(age))
+
+
+# ## 1.2 반복문
+
+# 1. while
+# 2. for
+
+# ### 1) while
+
+# ```
+# while 조건문:
+#     조건문인 참인 경우 실행
+#     거짓인 경우 while 반복문을 빠져나옴
+#     따라서 조건문이 변경되는 로직이 있어야 하고,
+#     조건문이 변경되지 않으면 영원히 while 반복문을 빠져나오지 못함
+# ```
+
+# In[20]:
+
+
+increment = 0
+while increment < 10:  # 조건문
+    print(increment)
+    increment += 1  # increment = increment + 1
+
+
+# In[3]:
+
+
+increment = 10
+while increment > 0:
+    print(increment)
+    increment -= 1  # increment = increment - 1
+
+
+# In[6]:
+
+
+increment = 10
+while True:
+    print(increment)
+    increment -= 1
+    if increment == 0:  # 특정 값일 때 while 반복문을 빠져나오기
+        break
+
+
+# ### 2) for
+
+# In[21]:
+
+
+range(4)
+
+
+# In[33]:
+
+
+for item in range(4):
+    print(item)
+
+
+# In[15]:
+
+
+range(4)
+
+
+# In[34]:
+
+
+for item in range(1, 4):
+    print(item)
+
+
+# In[36]:
+
+
+for item in range(1, 10, 2):  # 2 = step
+    print(item)
+
+
+# > **Q. 프로그래밍 고전! 구구단 3단과 4단을 아래와 같이 출력해볼까요?!**
+# 
+# > ex)
+# ```
+# --3단 시작--
+# 3 * 1 = 3
+# 3 * 2 = 6
+# 3 * 3 = 9
+# 3 * 4 = 12
+# 3 * 5 = 15
+# 3 * 6 = 18
+# 3 * 7 = 21
+# 3 * 8 = 24
+# 3 * 9 = 27
+# --4단 시작--
+# 4 * 1 = 4
+# 4 * 2 = 8
+# 4 * 3 = 12
+# 4 * 4 = 16
+# 4 * 5 = 20
+# 4 * 6 = 24
+# 4 * 7 = 28
+# 4 * 8 = 32
+# 4 * 9 = 36
+# ```
+# > hint)
+# 
+# > `print("{} * {} = {}".format(a, b, a * b))`
+
+# In[ ]:
+
+
+# 아래서부터 작성해보세요.
+
+
+# In[ ]:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# #### range가 아니어도 반복문을 사용할 수 있다!
+
+# In[37]:
+
+
+for item in ['냉장고', '세탁기', '선풍기']:  # list
+    print(item)
+
+
+# In[38]:
+
+
+for item in '세탁기':  # 문자열
+    print(item)
+
+
+# > **Q. 세탁기 모델 'LG전자 TR14WK'이 있습니다. 그런데 오타가 나서 'LG전자 TRI4WK'를 입력했다고 가정했을 때 I를 숫자 1로 바꾸어 출력해보세요.**
+
+# In[1]:
+
+
+model = "LG전자 TRI4WK"
+
+# 아래부터 코드를 작성해보세요.
+
+
+# > **Q. 지금까지 배운 반복문, 조건문을 이용해서 아래 문제를 풀어보세요.**
+# > - 놀이공원 입장비를 계산해보세요!
+# - 입장비는 나이에 따라 다릅니다.
+# - 사용자로부터 입장할 사람의 수를 무한대로 받을 수 있습니다.
+# - 사용자가 엔터를 입력하면 끝나고 지금까지 구한 입장비의 총합을 구해서 출력합니다. 
+
+# 알고리즘 (개발 순서)
+# 1. 먼저 고객의 나이를 받아 변수에 할당해둔다.
+# 2. 해당 변수의 값이 빈값이 아닌동안 아래 내용을 계속 실행한다.
+# 3. 조건문을 이용해서 해당 변수의 값이 연령대에 따라 total_price에 합산될 수 있도록 분기처리한다.
+# 4. 다 합산되었으면 다시 사용자로부터 값을 입력받아 해당 변수에 할당한다.
+
+# In[2]:
+
+
+# 가격
+BABY_PRICE = 1000  # 유아
+CHILD_PRICE = 2000  # 청소년
+ADULT_PRICE = 3000  # 성인
+
+
+# In[3]:
+
+
+# 연령대
+BABY_LIMIT = 2  # 2세 이하는 1000원
+CHILD_LIMIT = 18  # 18세 이하는 2000원
+ADULT_LIMIT = 60  # 60세 이하는 3000원, 60세 이후부터 무료
+
+
+# In[1]:
+
+
+total_price = 0
+age = input('고객의 나이를 입력하세요. (엔터는 종료)')  # 엔터는 값이 ''
+
+# 여기부터 작성하세요.
+
+
+# In[ ]:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# ---
+
+# # 2018년 5월 10일 목요일
+
+# > **Q. 애플 주식의 거래량 증가값/증가율을 확인해보고 만약 40%이상 증가 했으면 시그널을 주는 프로그래밍을 해보자(for/if문 이용)**
+# 
+# > prerequisite
+# 
+# > 1. pandas
+# 2. pandas-datareader
+# 3. fix-yahoo-finance
+
+# > **Q. 먼저 설치해야할 패키지가 위에 있습니다. 각자 설치해보도록 합시다!**
+
+# In[1]:
+
+
+from pandas_datareader import data
+import fix_yahoo_finance as yf
+
+
+# > **잠깐!!! pandas의 DataFrame을 살펴보겠습니다**
+
+# 1. 우선 [샘플 엑셀 파일](https://github.com/chris1610/pbpython/blob/master/data/sample-sales-reps.xlsx?raw=true)을 다운로드하세요.
+# 2. 다운받은 엑셀 파일을 열어서 엑셀에서 데이터를 확인해보세요.
+# 3. 엑셀에서 데이터를 확인했으면 아래 소스를 실행해볼까요?
+
+# 1. Series - 1
+# 2. DataFrame - 2
+
+# In[6]:
+
+
+import pandas as pd
+
+df = pd.read_excel("https://github.com/chris1610/pbpython/blob/master/data/sample-sales-reps.xlsx?raw=true")
+df.head()
+
+
+# pip uninstall xlrd
+
+# pip install xlrd
+# pip freeze
+# pip install --user xlrd
+# pip --help
+
+# In[3]:
+
+
+len(df)
+
+
+# In[7]:
+
+
+df.count()
+
+
+# Ubuntu (우분투) / CentOS
+# 16.04 -> 18.04 
+# macOS
+
+# 1. 엑셀과 모양이 똑같죠?!
+# 2. 엑셀에서 수작업으로 하는 작업을 컴퓨터에게 명령/지시(프로그래밍)할 수 있도록 도와주는 패키지가
+# 3. python의 pandas라는 패키지입니다.
+# 4. 공짜이고요!
+# 5. 객체지향적이고(프로그래밍 기법), 성능 더 좋고(in memory 기반 계산), 응용 프로그램을 만들기 좋음(Python 덕분)
+# 5. Wes Mckinney라는 분이 AQR(investment management 회사)에 다니다 만들었다고 합니다. 그 때 그분의 나이가 24살..
+
+# > **맛보고 가겠습니다! 엑셀로 account number가 680916인 것만 필터링해보겠습니다!**
+# 
+# > **그리고 아래 python으로도 필터링을 해보겠습니다!**
+
+# In[11]:
+
+
+df[  # 전체 데이터셋
+    df['account number'] == 680916  # T/F
+].head()
+
+
+# In[10]:
+
+
+df[df['account number'] == 680916].head(10)
+
+
+# > **여기까지 맛만 보고 하던거 계속해보겠습니다**
+
+# #### 결과물
+
+# - 새로운 컬럼이 추가됨(diff): 전일 volume과의 증감량
+# - 새로운 컬럼이 추가됨(pct): 전일 volume과의 증감율
+# - 새로운 컬럼이 추가됨(volume_signal): 증감율이 40이상인 경우 'Over 40% UP' 출력
+
+# In[13]:
+
+
+lge.tail(20)
+
+
+# In[1]:
+
+
+import datetime
+
+from pandas_datareader import data  # module
+import fix_yahoo_finance as yf
+yf.pdr_override()
+
+
+# > **Q. (Jupyter Notebook 실습) 이 셀 아래에 새로운 셀을 추가해서 `fix_yahoo_finance`라는 패키지를 왜 설치하는지 적어보세요! 마크다운으로!**
+
+# fix_yahoo_finance 필요한 이유는 pandas_datareader의 yahoo api 안먹혀서. 새로 설치
+
+# In[2]:
+
+
+lge = data.get_data_yahoo('066570.KS', start='2018-04-01')
+lge.head()
+
+
+# In[3]:
+
+
+len(lge)
+
+
+# In[4]:
+
+
+start = datetime.datetime(2018, 1, 1)
+
+
+# In[6]:
+
+
+type(start)
+
+
+# In[4]:
+
+
+lge = data.get_data_yahoo("066570.KS", start=start)  # 반환값은 pandas의 DataFrame 객체
+lge.head()
+
+
+# In[7]:
+
+
+lge['Volume'].head()  # head(): pandas의 DataFrame 객체가 갖고 있는 기능
+
+
+# In[10]:
+
+
+type(lge['Volume'])
+
+
+# In[8]:
+
+
+lge['Volume'].diff().head()  # diff(): pandas의 DataFrame 객체가 갖고 있는 기능
+
+
+# In[11]:
+
+
+lge['diff'] = lge['Volume'].diff()  # 새로운 컬럼 'diff'에 diff 반환값을 할당
+
+
+# In[12]:
+
+
+lge.head()
+
+
+# pip install --user numexpr
+
+# In[17]:
+
+
+pct = (lge['diff'] / lge['Volume']) * 100
+
+
+# In[19]:
+
+
+pct
+
+
+# In[20]:
+
+
+lge['pct'] = pct
+
+
+# In[21]:
+
+
+lge.head()
+
+
+# > **소수점 이하 숫자가 너무 많습니다! 소수점 둘째자리까지 구해보겠습니다.**
+
+# In[22]:
+
+
+lge['pct'] = round(pct, 2)
+
+
+# In[25]:
+
+
+lge.tail()
+
+
+# > **Q. 지금까지 만든 lge 데이터프레임의 데이터를 잠깐 위에 몇 개만 확인해보세요. 위에서 이미 했었죠?**
+
+# In[28]:
+
+
+# 여기에 작성해보세요.
+
+
+# In[ ]:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# > **! 지금까지 한 작업을 유식한 말로 Feature Engineering 이라고 합니다! 머신러닝할 때 많이 사용하는 기법이죠~**
+# 
+# > **유의미하게 생각되는 데이터를 있는 데이터 안에서 새롭게 만들어내는 방법을 말합니다!**
+
+# In[19]:
+
+
+lge.head()
+
+
+# In[29]:
+
+
+len(lge)
+
+
+# > **!? 이제 다 했지만 왜 for 반복문을 사용하는 것인가 ?!**
+# 
+# > **여러 개의 데이터가 있는 위 데이터프레임에서 pct 값을 하나씩 하나씩 가져와서 40% 이상인지 아닌지 따져야 하는 작업일 땐... for 문이 필요합니다!**
+# 
+# > **DataFrame의 여러 행에서 한 개 행씩 가져와서 pct의 값이 40이 넘는지 따져보고 넘으면 새로운 리스트에 추가해보도록 합시다.**
+
+# #### 개발 방법
+# 
+# 1. 새로운 컬럼에 넣을 새로운 데이터를 만드는 방법: `새로운 list를 만들어 list에 값을 하나씩 추가한다.`
+#     - `새로운리스트 = []`
+#     - `새로운리스트.append(넣을 값)`
+# 2. 만들어진 list를 새로운 컬럼에 넣는 방법: `lge['새롭게 추가할 컬럼 이름'] = 새롭게 만든 list`
+
+# In[30]:
+
+
+volume_signal = []  # list
+percentages = lge['pct']  # 증감율 데이터
+
+
+# In[31]:
+
+
+percentages.head(10)
+
+
+# In[ ]:
+
+
+# 아래부터 작성해보세요.
+
+
+# volume_signal 컬럼에 volume_signal 리스트 값 할당하기
+lge['volume_signal'] = volume_signal
+
+
+# In[ ]:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# In[36]:
+
+
+lge['volume_signal'] = volume_signal  # 할당
+
+
+# In[37]:
+
+
+lge.head()
+
+
+# > **! apply 메소드를 사용하는 방법도 있습니다! 이것은 pandas가 익숙해지면 많이 사용하게 될거에요!**
+
+# In[206]:
+
+
+def get_signal(pct):
+    if pct >= 40:
+        return 'Over'
+    return ''
+
+
+# In[207]:
+
+
+lge['new'] = lge['pct'].apply(lambda x: get_signal(x))
+
+
+# In[209]:
+
+
+lge.head()
+
+
+# > **! 해본 김에 간단한 그림도 그려볼까요!**
+
+# In[39]:
+
+
+get_ipython().run_line_magic('matplotlib', 'inline')
+
+
+# In[21]:
+
+
+lge['Adj Close'].plot(figsize=(15, 7))
+
+
+# > **Q. 해본 김에!! 차트에 title도 넣어볼까요? 가르쳐 드리진 않았지만 직접 생각해보고 찾아보세요! 어렵지 않습니다!**
+# 
+# > Jupyter Notebook에서는 잘 모르는 우리를 위해 기능을 찾아볼 수 있도록 Shift+Tab이란 기능을 마련해주었습니다!!!!
+
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+
+# In[24]:
+
+
+lge['Adj Close'].plot(figsize=(15, 7), title='LG Electronics Adj. Close Trend')
+
+
+# - 한글이 깨지는 문제는 내일 같이 해보겠습니다!
+
+# > **Q. 각자 원하는 주식 코드(Quote)를 찾아서 위와 같은 그림을 그려보아요!**
+# 
+# > http://finance.naver.com/에서 찾아볼 수 있습니다.
+
+# ## 1.3 데이터 타입
+
+# ### 1) 종류
+
+# 타입|설명|예
+# --|--|--
+# int|정수형 데이터|100
+# float|소숫점을 포함한 실수|10.25
+# bool|참/거짓|True
+# str|문자열|'LG Electronics'
+# list|리스트, 순서가 있는 배열, 수정/추가/삭제가 가능한 자료 구조|[1, 2, 3, 'a', 'b']
+# tuple|튜플, 순서가 있는 배열, 수정/추가/삭제가 불가능한 자료 구조|(1, 2, 3, 'a', 'b')
+# dict|사전, {key: value}로 구성되어있는 자료 구조|{'Math': 99, 'English': 88, 'Korean': 78}
+
+# ### 2) str
+
+# In[37]:
+
+
+name = "LG전자"
+
+
+# In[2]:
+
+
+for n in name:
+    print(n)
+
+
+# In[40]:
+
+
+for n in name:
+    print(n, end='')
+
+
+# In[3]:
+
+
+for idx, n in enumerate(name):
+    print(idx, n)
+
+
+# 메서드|설명
+# --|--
+# 문자열.startswith(prefix)|문자열이 prefix로 시작하는지 검사하여 True/False 반환
+# 문자열.endswith(suffix)|문자열이 suffix로 끝나는지 검사하여 True/False 반환
+# 문자열.format(value)|문자열의 특정 값을 value로 치환한다.
+# 문자열.replace(old, new)|s에 있는 old를 new로 바꾼다.
+# 문자열.split(sep)|sep를 구분자로 하여 문자열을 분할한다.
+# 문자열.strip(chars)|앞이나 뒤에 나오는 공백이나 chars로 지정된 문자들을 제거한다.
+
+# > **Q. 포수로 시작하는(startswith) 선수를 출력하라**
+
+# In[34]:
+
+
+players = ['투수 임찬국', '투수 류제국 ', '내야수 오진환 ', ' 내야수 가르시아', ' 포수 정상호 ']
+
+
+# In[38]:
+
+
+# 여기에 작성해보세요.
+
+
+# In[ ]:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# > **Q. 오진환 -> 오지환으로 바꾸어 출력해 보세요.**
+
+# In[39]:
+
+
+players = ['투수 임찬국', '투수 류제국 ', '내야수 오진환 ', ' 내야수 가르시아', ' 포수 정상호 ']
+
+
+# In[40]:
+
+
+# 여기에 작성해보세요.
+
+
+# In[ ]:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# ### 3) list ⭐️⭐️⭐️⭐️⭐️ vs. tuple ⭐️
+
+# - 순서가 있는 요소가 있는 자료 구조
+# - ex) `players = ['투수 임찬국', '투수 류제국', '내야수 오지환', '내야수 가르시아', '포수 정상호']`
+# - 차이가 있다면 아래 2가지가 있다.
+
+# list|tuple
+# --|--
+# [ ]|( )
+# 수정/삭제/추가 가능|수정/삭제/추가 불가능
+
+# - list만 추가/수정/삭제가 가능하므로 list에만 있는 메소드는 아래와 같다.
+
+# 메서드|설명
+# --|--
+# 리스트.append(x)|리스트의 끝에 새로운 원소 x를 추가
+# 리스트.extend(t)|리스트의 끝에 새로운 리스트 t를 추가
+# 리스트.count(x)|리스트에서 x가 출현한 횟수를 셈
+# 리스트.insert(i, x)|색인 i의 위치에 x를 삽입
+# 리스트.pop(i)|리스트에서 원소 i를 제거하면서 i를 반환, i를 생략하면 마지막 원소가 제거되면서 반환
+# 리스트.remove(x)|x를 찾아서 s에서 제거
+
+# > **Q. 리스트에 있는 원소 중 문자값/Null을 제거한 리스트를 출력하라.**
+
+# In[257]:
+
+
+lst = [1, 2, -8, None, 12, 0, 'NaN']
+
+
+# In[44]:
+
+
+# 여기에 작성해보세요.
+
+
+# In[ ]:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# > **Q. 동물을 잡아서 출력하라!**
+# 
+# > hint) 먼저는 문장 속 단어와 단어를 분리시켜야 합니다. 문자열을 공백을 기준으로 분리시키는 명령어가 무엇인지 생각해보세요.
+
+# In[260]:
+
+
+sentence = "The quick brown fox jumps over the lazy dog"
+
+
+# In[56]:
+
+
+# 여기에 작성하세요.
+
+
+# In[ ]:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# > **Q. 포지션과 이름을 구분 지어서 튜플로 저장하고 이를 다시 리스트에 저장해보자.**
+# 
+# > **[('투수', '임찬국'), ('투수', '류제국'), ('내야수', '오진환'), ('내야수', '가르시아'), ('포수', '정상호')]**
+
+# In[62]:
+
+
+players = ['투수 임찬국', '투수 류제국', '내야수 오지환', '내야수 가르시아', '포수 정상호']
+
+
+# In[64]:
+
+
+# 여기에 작성해보세요.
+
+
+# In[ ]:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# > **Q. 아래 중첩 리스트로 구현된 4층짜리 아파트 호수가 있습니다. **
+# 
+# > 
+# ```python
+# apart = [[101, 102, 103, 104], [201, 202, 203, 204], [301, 302, 302, 303], [401, 402, 403, 404]]
+# unsubscribed = [101, 203, 301, 404]
+# ```
+
+# In[ ]:
+
+
+apart = [[101, 102, 103, 104], [201, 202, 203, 204], [301, 302, 302, 303], [401, 402, 403, 404]]
+unsubscribed = [101, 203, 301, 404]
+
+# 아래부터 코드를 작성하세요.
+
+
+# In[ ]:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# #### Index and Slice
+
+# - 리스트/튜플/문자열에서
+#     - 원하는 값을 찾을 때는 Index
+#     - 원하는 값으로 자를 때는 Slice
+
+# In[3]:
+
+
+Image('images/slice.png')
+
+
+# 항목|설명
+# --|--
+# s[i]|순서열의 원서 i를 반환
+# s[i:j]|조각을 반환
+# s[i:k:stride]|확장 분할에 의한 조각을 반환
+
+# In[262]:
+
+
+a_list = [1, 2, 3, 4, 5]    # list
+
+a_list[2] == 3              # 특정 위치의 원소 참조. 참조번호는 0번부터 시작.
+a_list[-1] == 5             # 음수인 경우, 뒤에서부터 접근.
+a_list[2:4] == [3,4,5]      # 참조번호 2부터 4까지를 잘라서(slice) 반환함.
+a_list[2:] == [3,4,5]       # 참조번호 2부터 끝까지를 잘라서(slice) 반환함.
+a_list[:2] == [1,2]         # 처음부터 참조번호 2까지를 잘라서(slice) 반환함.
+a_list[2::2] == [3,5]       # 참조번호 2부터 끝까지를 자르되, 2칸씩 건너뛰면서 잘라서(slice) 반환함.
+
+
+# > **Q. 아래 리스트에서 포지션을 제외하고 이름만 출력해보세요.**
+# 
+# > **['투수 임찬국', '투수 류제국', '내야수 오지환', '포수 정상호']**
+
+# In[70]:
+
+
+players = ['투수 임찬국', '투수 류제국', '내야수 오지환', '포수 정상호']
+
+
+# In[ ]:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# > **Q. 위에서 작성했던 엘지전자 주식 데이터프레임에서 2018년 1월 5일부터 마지막까지 가져와보세요.**
+# 
+# > **Q. 위에서 작성했던 엘지전자 주식 데이터프레임에서 마지막 10개를 가져와보세요.**
+
+# ### 4) dictionary ⭐️⭐️⭐️⭐️⭐️
+
+# - `{ key: value, key: value, ... }`
+# - key: value 라는 쌍으로 이루진 값들을 담은 자료 구조
+# - list나 tuple과는 다르게 순서가 없다는 게 특징
+# - Javascript에서 object라는 게 있습니다. Python의 dict와 모양이 똑같습니다.
+# ```javascript
+# var car = {type: "Fiat", model: "500", color: "white"};
+# ```
+
+# 항목|설명
+# --|--
+# 딕셔너리.clear()|딕셔너리에서 모든 항목 제거
+# 딕셔너리.get(k , [v])|k가 있으면 k를 반환하고 아니면 v를 반환
+# 딕셔너리.items()|딕셔너리의 모든 (키, 값) 쌍들로 구성되는 순서열 반환
+# 딕셔너리.keys()|딕셔너리의 모든 키들의 순서열 바환
+# 딕셔너리.values()|딕셔너리에 있는 모든 값으로 구성되는 순서열 반환
+
+# > **Q. 영어 과목의 점수를 출력해보고 미술 과목을 추가해보자.**
+
+# In[272]:
+
+
+marks = {
+    '수학': 100,
+    '영어': 90,
+    '국어': 80
+}
+
+
+# In[273]:
+
+
+marks['영어']
+
+
+# In[274]:
+
+
+marks.get('영어')
+
+
+# In[275]:
+
+
+marks['미술'] = 30
+
+
+# In[276]:
+
+
+marks
+
+
+# In[83]:
+
+
+print(marks.get('English', 100))
+
+
+# In[81]:
+
+
+marks['Eng']
+
+
+# In[35]:
+
+
+marks['미술'] = 70
+print(marks)
+
+
+# In[281]:
+
+
+marks.keys()
+
+
+# In[282]:
+
+
+marks.values()
+
+
+# In[283]:
+
+
+marks.items()
+
+
+# > **Q. 포지션별로 선수를 모아보세요.**
+
+# In[279]:
+
+
+players = ['투수 임찬국', '투수 류제국', '내야수 오지환', '내야수 가르시아', '포수 정상호']
+
+
+# {
+# '투수': ['임찬국', '류제국'],
+# '내야수': [],
+# '포수': []
+# }
+
+# In[280]:
+
+
+by_position = {}
+
+# 아래에 코드를 작성해보세요.
+
+
+# In[ ]:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# > **Q. 사용자에게 입력받은 단어의 점수를 Score Card에 따라 표시해보세요.**
+
+# In[286]:
+
+
+alphabets = {
+    "D": 5, "E": 4, "F": 1, "G": 8, "H": 1,
+    "J": 7, "K": 9, "L": 2, "M": 1, "N": 10, "O": 2, "P": 7, "Q": 6,
+    "R": 8, "S": 10, "T": 9, "U": 3, "V": 4, "W": 3 , "X": 6, "Y": 6, "Z": 9
+}
+
+
+# In[285]:
+
+
+word = input('단어를 입력하세요.').upper()
+
+# 아래에 코드를 작성해보세요.
+
+
+# In[ ]:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# > **Dictionary를 통해 pandas의 DataFrame을 만들수도 있습니다!**
+
+# In[288]:
+
+
+import pandas as pd
+
+
+# In[290]:
+
+
+sales = {'account': ['Jones LLC', 'Alpha Co', 'Blue Inc'],
+         'Jan': [150, 200, 50],
+         'Feb': [200, 210, 90],
+         'Mar': [140, 215, 95]}
+df = pd.DataFrame.from_dict(sales)
+df
+
+
+# > **공공데이터를 이용한 예제를 잠깐 살펴보겠습니다!**
+# 
+# > **공공데이터는 많은 경우 JSON으로 데이터를 반환해줍니다. 그런데 Dictionary라는 데이터 구조는 JSON 구조와 똑같이 생겼습니다!**
+# 
+# > ```
+# json = {key: value, key: value}
+# dict = {key: value, key: value}
+# ```
+# 
+# > 아래는 https://www.data.go.kr/ 공공데이터 포털에서 가져온 대기오염 예보 데이터 입니다. 해당 데이터를 가져와보도록 하겠습니다.
+# 
+# > **주의!! 아래 예제는 data.go.kr에서 발행하는 serviceKey가 필요하며 회원가입 후 무료로 받을 수 있습니다. 아래에 있는 serviceKey는 우선 강사 것을 오늘(5/9)까지만 사용하는 것으로 하겠습니다. 다음부턴 여러분이 직접 무료로 발행받아서 할 수 있습니다!**
+
+# In[310]:
+
+
+url = "http://openapi.airkorea.or.kr/openapi/services/rest/ArpltnInforInqireSvc/getMinuDustFrcstDspth?searchDate=2018-05-07&ServiceKey=onteHaLQqX4NBcIGuObd45rQm91%2FPv%2FXYS3s7A%2BOVrRG2Bo%2FyinDpe8XAQoKL0mYhyNn57hteD%2Brcu8F23C4kQ%3D%3D&_returnType=json"
+
+
+# In[293]:
+
+
+import requests
+import json
+
+
+# In[311]:
+
+
+res_url = requests.get(url)
+res_url
+
+
+# In[312]:
+
+
+json_data = json.loads(res_url.text)
+
+
+# In[313]:
+
+
+json_data
+
+
+# In[314]:
+
+
+json_data['list']
+
+
+# In[308]:
+
+
+pd.set_option('display.max_columns', 40)
+
+
+# In[316]:
+
+
+dirts_forecast = pd.DataFrame(json_data['list'])
+dirts_forecast.head()
+
+
+# In[321]:
+
+
+dirts_forecast.drop(columns='_returnType', inplace=True)
+
+
+# In[321]:
+
+
+dirts_forecast.drop(columns='actionKnack', inplace=True)
+
+
+# In[322]:
+
+
+dirts_forecast
+
+
+# > **Q. dirts_forecast에서 f_data_time, f_data_time1, f_data_time2, f_data_time3, f_inform_data 총 5개 컬럼을 한 꺼번에 삭제를 해보세요!**
+
+# In[ ]:
+
+
+# 여기서부터 작성해보세요.
+
+
+# > **Q. 본 김에 계속 볼까요!?!? 문제는 다른 데에 있습니다. 한국환경공단에서 주는 이 데이터는 OPEN API로 간편하게 데이터를 얻어올 수는 있지만 데이터는 깨끗하진 않군요. 아래 깨끗하지 않은 데이터를 어떻게 께끗하게 지역별로 구분해서 출력할 수 있을까요?**
+
+# In[327]:
+
+
+dirts_forecast['informGrade'][0]  # 5월 7일 23시에 발표한 5월 7일 PM10 미세먼지 예보
+
+
+# In[ ]:
+
+
+# 여기서부터 작성해보세요.
+
+
+# ## 1.4 함수
+
+# - Objective: Maximizing Code Reuse and Minimizing Redundancy
+
+# In[2]:
+
+
+Image('images/function.png')
+
+
+# ### 1) 만드는 방법
+
+# - 함수는 `def` 로 정의한다.
+
+# callable object
+
+# In[93]:
+
+
+def add(x, y, a):
+    return x + y + a
+
+
+# In[95]:
+
+
+print(add(1, 2, 'a'))
+
+
+# In[78]:
+
+
+def add(x, y):
+    print(x + y)
+
+
+# In[82]:
+
+
+add(1, 2)
+
+
+# ### 2) 인자값(Arguments)
+
+# In[99]:
+
+
+def greet(name, greeting="안녕"):
+    print('{0}! {1}!'.format(name, greeting))
+
+
+# In[98]:
+
+
+greet('정광윤', greeting='Hello!')
+
+
+# In[42]:
+
+
+greet('정광윤', 'Hello')
+
+
+# > **Q. 3개의 인자값을 받아 평균을 반환하는 함수를 만들어보세요.**
+
+# In[ ]:
+
+
+# 여기에 코드를 작성해보세요.
+
+
+# In[ ]:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# > **Q. 미국에 있는 주(State)의 수도는 무엇인지 출력하는 함수 `find_capital`를 만들어보세요.**
+
+# In[103]:
+
+
+# 미국의 주의 수도를 찾는 함수를 만드세요.
+STATES_CAPITALS = {
+    'Alabama': 'Montgomery',
+    'Alaska': 'Juneau',
+    'Arizona': 'Phoenix',
+    'Wyoming': 'Cheyenne',
+}
+
+# 여기에 코드를 작성하세요.
+
+
+find_capital('Alabama')
+
+
+# In[ ]:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# > **Q. Hasgtag 추출해서 List에 담기**
+
+# In[43]:
+
+
+# 게시글 제목
+title = """
+On top of the world! Life is so fantastic if you just let it.
+I have never been happier. #nyc #newyork #vacation #traveling
+"""
+
+tag_list = []
+
+# 아래에 코드를 작성해보세요.
+
+
+print(tag_list)
+
+
+# In[ ]:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# > **Q. 모스암호 풀기**
+
+# In[334]:
+
+
+# 모스부호
+dic = {
+    '.-': 'A', '-...': 'B', '-.-.': 'C', '-..': 'D', '.':'E', '..-.': 'F',
+    '--.': 'G', '....': 'H', '..': 'I', '.---': 'J', '-.-': 'K', '.-..': 'L',
+    '--': 'M', '-.': 'N', '---': 'O', '.--.': 'P', '--.-': 'Q', '.-.': 'R',
+    '...': 'S', '-': 'T', '..-': 'U', '...-': 'V', '.--': 'W', '-..-': 'X',
+    '-.--': 'Y', '--..': 'Z'
+}
+ 
+# 풀어야할 암호: HE SLEEPS EARLY
+code = '.... .  ... .-.. . . .--. ...  . .- .-. .-.. -.--'
+ 
+# 아래에 코드를 작성해보세요.
+
+
+# In[ ]:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# ---
+
+# # Wrap up
+
+# - 나는 오늘 데이터 사이언스의 필요성과 중요성 인식했다.
+# - 나는 오늘 데이터 사이언스에서 Python을 활용하는 큰 그림을 알 것만 같다.
+# - 나는 오늘 Python을 어떻게 설치하는지 알았고 패키지를 설치하는 방법을 배웠다.
+# - 나는 오늘 Python의 기본적인 문법을 살펴봤고 실습을 통해 프로그래밍한다는 게 뭔지 좀 알게 됐다.
+# - 나는 오늘 실습을 통해 Jupyter Notebook의 기본적인 사용방법을 익혔다.
+# - 나는 오늘 드디어 Python을 맛 보았다. 유익한 하루였다.
+
+# - 지금까지는 분석 기법에 초점을 둔 Python이 아니었습니다.
+# - Python에 친숙해질 수 있도록 여러가지 실습을 해보았습니다.
+# - 내일부터는 분석 기법에 초점을 두어 연습을 해보겠습니다.
