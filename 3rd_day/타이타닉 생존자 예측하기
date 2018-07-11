@@ -202,9 +202,13 @@ Y_train = train['Survived']
 # In[23]:
 
 
-from sklearn.tree import DecisionTreeClassifier
-model = DecisionTreeClassifier(max_depth=5)
-
+#from sklearn.tree import DecisionTreeClassifier
+#model = DecisionTreeClassifier(max_depth=5)
+from sklearn.ensemble import RandomForestClassifier
+model = RandomForestClassifier(n_estimators = 500,
+                              max_depth = 4,
+                              max_features=0.7,
+                              random_state=3)
 
 # In[24]:
 
