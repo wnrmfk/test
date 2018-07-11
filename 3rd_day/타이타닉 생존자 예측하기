@@ -1,0 +1,261 @@
+
+# coding: utf-8
+
+# # 타이타닉 생존자 예측하기
+
+# In[1]:
+
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from IPython.display import Image
+
+get_ipython().run_line_magic('matplotlib', 'inline')
+
+
+# # Load Dataset
+
+# In[2]:
+
+
+train = pd.read_csv('data/titanic/train.csv' , index_col=["PassengerId"])
+print(train.shape)
+train.head()
+
+
+# In[3]:
+
+
+train.columns
+
+
+# In[4]:
+
+
+test = pd.read_csv('data/titanic/test.csv' , index_col=["PassengerId"])
+print(test.shape)
+test.head()
+
+
+# # 시각화
+
+# ### CountPlot
+
+# In[5]:
+
+
+sns.countplot(data = train, x='Embarked')
+
+
+# In[6]:
+
+
+sns.countplot(data = train, x='Embarked', hue='Survived')
+
+
+# In[7]:
+
+
+sns.countplot(data = train, x='Pclass', hue='Survived')
+
+
+# ### BarPlot
+
+# In[8]:
+
+
+sns.barplot(data = train , x = 'Pclass' , y = 'Fare' , hue = 'Survived')
+
+
+# In[9]:
+
+
+fare = train[train['Fare']>0].count()
+fare
+
+
+# In[10]:
+
+
+sns.distplot(train['Fare'] , hist = True)
+
+
+# In[11]:
+
+
+ignore_high_fare = train[train['Fare']<100]
+perish = ignore_high_fare[ignore_high_fare['Survived'] == 0]
+survived = ignore_high_fare[ignore_high_fare['Survived'] == 1]
+
+sns.distplot(perish['Fare'], hist = False , label = 'Perish')
+sns.distplot(survived['Fare'], hist = False , label = 'Survived')
+
+
+# ### Lmplot
+
+# In[12]:
+
+
+sns.lmplot(data = ignore_high_fare , x='Age' , y = 'Fare' , hue = 'Survived' , fit_reg = False)
+
+
+# ### SubPlot
+
+# In[13]:
+
+
+figure, ((ax1, ax2, ax3) , (ax4, ax5, ax6)) = plt.subplots(nrows = 2 , ncols = 3)
+figure.set_size_inches(18,8)
+
+sns.countplot(data=train , x='Pclass' , hue = 'Survived' , ax = ax1)
+sns.countplot(data=train , x='Sex' , hue = 'Survived' , ax = ax2)
+sns.countplot(data=train , x='Embarked' , hue = 'Survived' , ax = ax3)
+sns.countplot(data=train , x='SibSp' , hue = 'Survived' , ax = ax4)
+sns.countplot(data=train , x='Parch' , hue = 'Survived' , ax = ax5)
+sns.countplot(data=train , x='Age' , hue = 'Survived' , ax = ax6)
+
+
+# ### 함수 정의 ( 호칭 잘라내기 )
+
+# In[14]:
+
+
+def find_app(name):
+    return name.split(", ")[1].split(".")[0]
+
+train["App."]=train["Name"].apply(find_app)
+train
+
+
+# In[15]:
+
+
+sns.countplot(data=train, x='App.' , hue='Survived')
+
+appcount = train['App.'].value_counts()
+appcount
+
+
+
+# # Pre-Processing
+
+# In[16]:
+
+
+train.loc[train['Sex'] == 'male', "Sex_encode"] = 0
+train.loc[train['Sex'] == 'female', "Sex_encode"] = 1
+train['Sex_encode'].value_counts()
+
+
+# In[17]:
+
+
+test.loc[test['Sex'] == 'male', "Sex_encode"] = 0
+test.loc[test['Sex'] == 'female', "Sex_encode"] = 1
+test['Sex_encode'].value_counts()
+
+
+# In[18]:
+
+
+mean_fare = train['Fare'].mean()
+
+print('Fare(Mean) = {0:.2f}'.format(mean_fare))
+mean_fare
+
+
+# In[19]:
+
+
+train.loc[pd.isnull(train['Fare']), 'Fare'] = mean_fare
+test.loc[pd.isnull(test['Fare']), 'Fare'] = mean_fare
+
+
+# In[20]:
+
+
+train_embarked = pd.get_dummies(train['Embarked'], prefix = 'Embarked')
+test_embarked = pd.get_dummies(test['Embarked'], prefix = 'Embarked')
+
+
+# In[21]:
+
+
+train = pd.concat([train, train_embarked], axis=1)
+test = pd.concat([test, test_embarked], axis=1)
+train
+
+
+# # Train
+
+# In[22]:
+
+
+feature_names = ["Pclass", "Sex_encode", "Fare", "Embarked_C", "Embarked_Q", "Embarked_S"]
+
+X_train = train[feature_names]
+Y_train = train['Survived']
+
+
+# In[23]:
+
+
+from sklearn.tree import DecisionTreeClassifier
+model = DecisionTreeClassifier(max_depth=5)
+
+
+# In[24]:
+
+
+model.fit(X_train, Y_train)
+
+
+# In[25]:
+
+
+from sklearn.tree import export_graphviz
+import graphviz
+
+
+# In[35]:
+
+
+export_graphviz(model,
+               feature_names=feature_names,
+               class_names=["Perish", "Survived"],
+               out_file="decision-tree.dot")
+with open("decision-tree.dot") as f:
+    dot_graph=f.read()
+    
+graphviz.Source(dot_graph)
+
+
+# In[37]:
+
+
+X_test = test[feature_names]
+X_test
+
+
+# In[38]:
+
+
+predict_Y_test = model.predict(X_test)
+predict_Y_test
+
+
+# In[42]:
+
+
+submission = pd.read_csv('data/titanic/gender_submission.csv', index_col='PassengerId')
+submission["Survived"] = predict_Y_test
+submission
+
+
+# In[44]:
+
+
+submission.to_csv("data/titanic/predict0.csv")
+
