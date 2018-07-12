@@ -1,0 +1,17 @@
+Simulation simulation_0 = getActiveSimulation();
+        Collection<GeometryPart> partCollection = simulation_0.get(SimulationPartManager.class).getLeafParts();
+int k = partCollection.size();
+Collection partCollectionArrayList = new ArrayList();
+partCollectionArrayList = simulation_0.get(SimulationPartManager.class).getLeafParts();
+
+For (int i=0; i<k; i++) {
+CadPart cadPartA = partCollectionArrayList.get(i);
+For (int j=i+1; j=<k; j++) {
+CadPart cadPartB = partCollectionArrayList.get(j);
+imprint(cadPartA, cadPartB)
+String stringA = cadPartA.RepresentationName();
+String stringB = cadPartB.RepresentationName();
+Naming imprintOperation ("Imprint"+ stringA + stringB);
+Cad Imprint True;
+}
+}
